@@ -1,12 +1,4 @@
-// let Test = 1;
-// switch (Test) {
-//     case 1:
-//         console.log("Case 1");
-       
-//     default:
-//         console.log("Default case");
-//         break
-// }
+
 
 
 const chatBox = document.getElementById("chatBox");
@@ -14,9 +6,9 @@ const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const welcomeMessage = document.getElementById("welcomeMessage");
 
-// Load saved chat
+// load saved chat
 window.onload = function () {
-    const savedChat = localStorage.getItem("aiChatHistory");
+    const savedChat = localStorage.getItem("aichathistoryyy");
 
     if (savedChat) {
         chatBox.innerHTML = savedChat;
@@ -26,7 +18,7 @@ window.onload = function () {
     }
 };
 
-// Time-based greeting
+// time based greeting 
 function getTimeGreeting() {
     const hour = new Date().getHours();
 
@@ -39,7 +31,7 @@ function getTimeGreeting() {
     }
 }
 
-// Send message
+// send message
 function sendMessage() {
     const message = userInput.value.trim();
     if (message === "") return;
@@ -56,7 +48,7 @@ function sendMessage() {
     userInput.value = "";
 }
 
-// Add user message
+// add user message
 function addUserMessage(text) {
     const div = document.createElement("div");
     div.classList.add("message", "user");
@@ -67,7 +59,7 @@ function addUserMessage(text) {
     scrollToBottom();
 }
 
-// Add bot message
+// add bot message
 function addBotMessage(text) {
     const div = document.createElement("div");
     div.classList.add("message", "bot");
@@ -78,16 +70,20 @@ function addBotMessage(text) {
     scrollToBottom();
 }
 
-// Rule-based responses
+//this is our rule based responses
 function getBotResponse(input) {
     input = input.toLowerCase();
 
-    if (input.includes("hello") || input.includes("hi")) {
-        return "Hello! I'm AI CHATBOT 🤖";
+    if (input.includes("hello") || input.includes("hi") || input.includes("hey")){
+        return "Hello! I'm AI CHATBOT ";
     }
 
     if (input.includes("how are you")) {
         return "I'm normally good and ready to assist!";
+    }
+
+     if (input.includes("you know me")) {
+        return "No, i'm just a simple CHATBOT but you can ask me what time/date it is!";
     }
 
     if (input.includes("your name")) {
@@ -106,17 +102,18 @@ function getBotResponse(input) {
         return "Goodbye! Have a great day!";
     }
 
-    return "Sorry, I don't understand that yet. Try asking something else.";
+    return "Sorry I don't understand that. Try asking something else.";
 }
 
 // Save chat
 function saveChat() {
-    localStorage.setItem("aiChatHistory", chatBox.innerHTML);
+    localStorage.setItem("aichathistoryyy", chatBox.innerHTML);
 }
 
 // Scroll
 function scrollToBottom() {
     chatBox.parentElement.scrollTop = chatBox.parentElement.scrollHeight;
+
 }
 
 // Events
@@ -128,41 +125,6 @@ userInput.addEventListener("keypress", function (e) {
     }
 });
 
-// Live Clock
-function updateClock() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString();
-    document.getElementById("clock").textContent = timeString;
-}
-
-// Update every second
-setInterval(updateClock, 1000);
-
-// Initialize immediately
-updateClock();
-
-// Live Date & Time
-function updateDateTime() {
-    const now = new Date();
-
-    const timeString = now.toLocaleTimeString();
-    const dateString = now.toLocaleDateString(undefined, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-
-    document.getElementById("clock").textContent = timeString;
-    document.getElementById("date").textContent = dateString;
-}
-
-setInterval(updateDateTime, 1000);
-updateDateTime();
 
 
-// Update every second
-setInterval(updateClock, 1000);
 
-// Initialize immediately
-updateClock();
