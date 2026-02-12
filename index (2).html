@@ -1,0 +1,216 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Smart City Dashboard</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: white;
+    }
+    header {
+        padding: 20px;
+        text-align: center;
+        background: #1e293b;
+        font-size: 24px;
+        letter-spacing: 2px;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+    .card {
+        background: #1e293b;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        transition: 0.3s;
+    }
+    .card:hover {
+        transform: scale(1.03);
+    }
+    .title {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    .value {
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .bar {
+        height: 10px;
+        background: #334155;
+        border-radius: 5px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+    .bar-fill {
+        height: 100%;
+        background: #38bdf8;
+        width: 50%;
+        transition: width 0.5s ease;
+    }
+    .alert {
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+    .safe { background: #16a34a; }
+    .warning { background: #facc15; color: black; }
+    .danger { background: #dc2626; }
+</style>
+</head>
+<body>
+
+<header>SMART SMART CITY DASHBOARD</header>
+
+<div class="grid">
+
+    <div class="card" id="trafficCard">
+        <div class="title">🚦 Traffic Status</div>
+        <div class="value" id="trafficValue">--%</div>
+        <div class="bar"><div class="bar-fill" id="trafficBar"></div></div>
+    </div>
+
+    <div class="card" id="energyCard">
+        <div class="title">⚡ Energy Consumption</div>
+        <div class="value" id="energyValue">-- MW</div>
+        <div class="bar"><div class="bar-fill" id="energyBar"></div></div>
+    </div>
+
+    <div class="card" id="wasteCard">
+        <div class="title">♻ Waste Management</div>
+        <div class="value" id="wasteValue">--%</div>
+        <div class="bar"><div class="bar-fill" id="wasteBar"></div></div>
+    </div>
+
+    <div class="card" id="transportCard">
+        <div class="title">🚌 Public Transport</div>
+        <div class="value" id="transportValue">-- Active</div>
+        <div class="bar"><div class="bar-fill" id="transportBar"></div></div>
+    </div>
+
+    <div class="card" id="emergencyCard">
+        <div class="title">🚨 Emergency Alerts</div>
+        <div id="emergencyStatus" class="alert safe">All Systems Normal</div>
+    </div>
+
+</div>
+
+<script>
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function updateTraffic() {
+    let value = random(10, 100);
+    document.getElementById("trafficValue").textContent = value + "%";
+    document.getElementById("trafficBar").style.width = value + "%";
+}
+
+function updateEnergy() {
+    let value = random(200, 1000);
+    document.getElementById("energyValue").textContent = value + " MW";
+    document.getElementById("energyBar").style.width = (value/10) + "%";
+}
+
+function updateWaste() {
+    let value = random(20, 100);
+    document.getElementById("wasteValue").textContent = value + "% Collected";
+    document.getElementById("wasteBar").style.width = value + "%";
+}
+
+function updateTransport() {
+    let value = random(50, 300);
+    document.getElementById("transportValue").textContent = value + " Vehicles";
+    document.getElementById("transportBar").style.width = (value/3) + "%";
+}
+
+function updateEmergency() {
+    let status = random(1, 10);
+    let alertBox = document.getElementById("emergencyStatus");
+    
+    if (status <= 6) {
+        alertBox.textContent = "All Systems Normal";
+        alertBox.className = "alert safe";
+    } else if (status <= 8) {
+        alertBox.textContent = "Minor Incident Reported";
+        alertBox.className = "alert warning";
+    } else {
+        alertBox.textContent = "Major Emergency! Immediate Action Required";
+        alertBox.className = "alert danger";
+    }
+}
+
+function updateAll() {
+    updateTraffic();
+    updateEnergy();
+    updateWaste();
+    updateTransport();
+    updateEmergency();
+}
+
+updateAll();
+setInterval(updateAll, 3000);
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- timezone -->
+   <div class="header">
+    <div class="datetime">
+        <div id="date"></div>
+        <div id="clock"></div>
+    </div>
+</div>
+
+
+    <meta charset="UTF-8">
+    <title>AI CHATBOT (Group 5)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Modern Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- Header -->
+    <div class="header">
+        AI CHATBOT (Group 5)
+    </div>
+
+    <!-- Chat Output Area -->
+    <div class="chat-container" id="chatContainer">
+        <div class="welcome" id="welcomeMessage">
+            <h1>Welcome to AI CHATBOT</h1>
+            <p>Your intelligent assistant. Ask me anything.</p>
+        </div>
+
+        <div id="chatBox" class="chat-box"></div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Send a message..." autocomplete="off">
+        <button id="sendBtn">Send</button>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
