@@ -1,92 +1,4 @@
-  /* body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-      background-color: #f4f4f9;
-      color: #333;
-      transition: background-color 0.3s, color 0.3s;
-  }
-
-  nav {
-      background-color: #007bff;
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-  }
-
-  nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-  }
-
-  nav ul li {
-      margin-left: 20px;
-  }
-
-  nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.1rem;
-  }
-
-  nav a:hover {
-      text-decoration: underline;
-  }
-
-  .toggle-btn {
-      background-color: white;
-      color: #007bff;
-      border: none;
-      padding: 8px 15px;
-      cursor: pointer;
-      border-radius: 5px;
-      font-weight: bold;
-  }
-
-  .toggle-btn:hover {
-      background-color: #e2e6ea;
-  }
-
-  section {
-      padding: 60px 20px;
-      max-width: 800px;
-      margin: auto;
-      border-bottom: 1px solid #ddd;
-  }
-
-  h1,
-  h2 {
-      color: #007bff;
-  }
-
-  body.dark-mode {
-      background-color: #121212;
-      color: #e0e0e0;
-  }
-
-  body.dark-mode section {
-      border-bottom: 1px solid #333;
-  }
-
-  body.dark-mode nav {
-      background-color: #1f1f1f;
-  }
-
-  body.dark-mode h1,
-  body.dark-mode h2 {
-      color: #bb86fc;
-  }
-
-  html {
-      scroll-behavior: smooth;
-  } */
-
-  /* Animated Gradient Background */
+ 
 * {
     margin: 0;
     padding: 0;
@@ -100,10 +12,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: rgb(255, 255, 255);
 }
 
-/* Main App Container */
+/* main app container */
 .app {
     width: 100%;
     max-width: 800px;
@@ -117,7 +29,7 @@ body {
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
 }
 
-/* Header */
+/* header */
 .header {
     padding: 20px;
     font-size: 20px;
@@ -133,54 +45,59 @@ body {
     align-items: center;
     background: rgba(255,255,255,0.08);
     border-bottom: 1px solid rgba(255,255,255,0.1);
+    
 }
+.chat-container::-webkit-scrollbar {
+    width: 8px; /* scrollbar thickness */
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: #1f2a38; /* dark background for track */
+    border-radius: 10px;
+}
+
+/* the draggable part */
+.chat-container::-webkit-scrollbar-thumb {
+    background: #00c6ff; 
+    border-radius: 10px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+    background: #0072ff; 
+}
+
 
 .title {
     font-size: 20px;
     font-weight: 600;
 }
 
-.datetime {
-    text-align: right;
-    font-size: 13px;
-    opacity: 0.8;
-}
 
-#date {
-    font-weight: 500;
-}
 
-#clock {
-    font-size: 14px;
-}
 
-/* Clock Style */
-.clock {
-    font-size: 14px;
-    font-weight: 500;
-    opacity: 0.8;
-}
-
-/* Chat Area */
+/* chat area */
 .chat-container {
     flex: 1;
     padding: 40px 20px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    align-items: center;   /* CENTER CONTENT */
+    align-items: center;  
+    
 }
 
-/* Chat Box */
+/* chat box */
 .chat-box {
     width: 100%;
     max-width: 600px;      /* Keep messages centered */
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    
 }
 
-/* Welcome */
+/* welcome */
 .welcome {
     text-align: center;
     margin-top: 120px;
@@ -196,7 +113,7 @@ body {
     opacity: 0.7;
 }
 
-/* Messages */
+/* messages */
 .message {
     padding: 15px 20px;
     border-radius: 15px;
@@ -204,29 +121,30 @@ body {
     font-size: 15px;
     max-width: 100%;
     animation: fadeIn 0.3s ease;
-        background: linear-gradient(135deg, #00c6ff, #0072ff);
 
 }
 
-/* User */
+/* user */
 .user {
     align-self: flex-end;
     background: linear-gradient(135deg, #00c6ff, #0072ff);
 }
 
-/* Bot */
+/* bot */
 .bot {
     align-self: flex-start;
     background: rgba(255,255,255,0.1);
 }
 
-/* Input Area */
+/* input Area */
 .input-area {
     display: flex;
-    justify-content: center; /* CENTER INPUT */
+    justify-content: center;
     padding: 20px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(207, 207, 207, 0.08);
     border-top: 1px solid rgba(255,255,255,0.1);
+
+   
 }
 
 .input-area input {
@@ -237,6 +155,17 @@ body {
     border: none;
     outline: none;
     font-size: 15px;
+    background: rgb(255,255,255,0.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    
+  
+
+}
+.input-area input::placeholder {
+    color: rgb(255, 255, 255);
+    }
+.input-area input[type="text"] {
+    color: rgb(255, 255, 255);
 }
 
 .input-area button {
@@ -244,17 +173,19 @@ body {
     padding: 14px 20px;
     border-radius: 30px;
     border: none;
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    background: rgb(255,255,255,0.1);
     color: white;
     cursor: pointer;
     transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
 }
 
 .input-area button:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
-/* Animation */
+/* animation if you want to fade out or in */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
