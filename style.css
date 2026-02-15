@@ -1,9 +1,12 @@
  
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+ :root {
+    /* Dark mode variables (default) */
+    --border-color: rgba(255, 255, 255, 0.3); /* for outlines in dark mode */
 }
+
+/* Light mode border */
+body.light-mode {
+color: inherit;} 
 
 body {
     font-family: 'Inter', sans-serif;
@@ -32,19 +35,12 @@ body {
 /* header */
 .header {
     padding: 20px;
-    font-size: 20px;
-    font-weight: 600;
-    text-align: center;
-    background: rgba(255,255,255,0.08);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.header {
-    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: rgba(255,255,255,0.08);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid var(--border-color);
+    
     
 }
 .chat-container::-webkit-scrollbar {
@@ -52,7 +48,7 @@ body {
 }
 
 .chat-container::-webkit-scrollbar-track {
-    background: #1f2a38; /* dark background for track */
+    background: #494949; /* dark background for track */
     border-radius: 10px;
 }
 
@@ -63,7 +59,7 @@ body {
 }
 
 .chat-container::-webkit-scrollbar-thumb:hover {
-    background: #0072ff; 
+    background: #00a5d3; 
 }
 
 
@@ -127,13 +123,23 @@ body {
 /* user */
 .user {
     align-self: flex-end;
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    background: linear-gradient(135deg, #00c6ff, #1886b9);
+    border: 1px solid var(--border-color); /* outline */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    padding: 15px 20px;
 }
+
+    
 
 /* bot */
 .bot {
     align-self: flex-start;
     background: rgba(255,255,255,0.1);
+    border: 1px solid var(--border-color); /* outline */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* subtle shadow */
+    border-radius: 15px;
+    padding: 15px 20px;
 }
 
 /* input Area */
@@ -142,7 +148,7 @@ body {
     justify-content: center;
     padding: 20px;
     background: rgba(207, 207, 207, 0.08);
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid var(--border-color);
 
    
 }
@@ -156,16 +162,17 @@ body {
     outline: none;
     font-size: 15px;
     background: rgb(255,255,255,0.1);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border:1px solid var(--border-color);
   
-
 }
+
 .input-area input::placeholder {
     color: rgb(255, 255, 255);
+    
     }
 .input-area input[type="text"] {
-    color: rgb(255, 255, 255);
+    color: inherit; /* inherit text white in dark mode okok*/
 }
 
 .input-area button {
@@ -182,11 +189,119 @@ body {
 }
 
 .input-area button:hover {
+    
     transform: scale(1.1);
+    
 }
+
 
 /* animation if you want to fade out or in */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+
+
+
+/* theme toggle button */
+/* Base Toggle Styles */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Smooth transition for hover and scale */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+}
+
+/* Hover Scale Effect */
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Squeeze effect when actually clicking */
+.theme-toggle:active {
+    transform: scale(0.85); 
+}
+
+/* Light mode specific button adjustment */
+body.light-mode .theme-toggle {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* The rotation animation class triggered by JS */
+.rotate-animation {
+    animation: rotateToggle 0.5s ease-in-out;
+}
+
+@keyframes rotateToggle {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.3); } /* Pops out slightly mid-spin */
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+
+
+body.light-mode {
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    --border-color: #c0c0c0; /* outline for light mode */
+}
+
+body.light-mode .app {
+    background: #ffffff; /* lighter container/ the middle ui main */
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+body.light-mode .bot {
+    background: #f5f5f5;
+    border: 1px solid var(--border-color);
+}
+
+body.light-mode .input-area input {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+}
+
+body.light-mode .input-area button {
+    background: #4facfe;
+    color: #fff;
+    border: 1px solid var(--border-color);
+}
+
+body.light-mode .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    border: 1px solid var(--border-color);
+
+}
+
+body.light-mode .input-area input::placeholder {
+    color: rgba(83, 83, 83, 0.7);
+}
+
