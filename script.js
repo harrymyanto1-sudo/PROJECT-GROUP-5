@@ -172,6 +172,16 @@ function getBotResponse(input) {
         return "I can help you stay organized! Try:\n• Managing a schedule\n• Playing Rock Paper Scissors\n• Telling you the time/date\n• Giving you motivation!";
     }
 
+    if (input === "quote" || input.includes("motivate me")) {
+        const quotes = [
+            "Believe you can and you're halfway there.",
+            "Your limitation—it’s only your imagination.",
+            "Push yourself, because no one else is going to do it for you.",
+            "Great things never come from comfort zones."
+        ];
+        return "✨ " + quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
     if (input.includes("you know me")) {
         return "No, I'm just a simple AI CHATBOT but you can ask me what time/date is it right now!";
     }
