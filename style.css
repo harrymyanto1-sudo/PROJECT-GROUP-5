@@ -1,6 +1,6 @@
  
  :root {
-    /* Dark mode variables (default) */
+    /* dark mode variables (default) */
     --border-color: rgba(255, 255, 255, 0.3); /* for outlines in dark mode */
 }
 
@@ -57,12 +57,12 @@ body {
 
 /* the draggable part */
 .chat-container::-webkit-scrollbar-thumb {
-    background: #00c6ff; 
+    background: #b9b9b9; 
     border-radius: 10px;
 }
 
 .chat-container::-webkit-scrollbar-thumb:hover {
-    background: #00a5d3; 
+    background: #cacaca; 
 }
 
 
@@ -70,7 +70,6 @@ body {
     font-size: 20px;
     font-weight: 600;
 }
-
 
 
 
@@ -113,7 +112,6 @@ body {
 }
 
 /* messages */
-/* Update your existing .message class */
 .message {
     padding: 15px 20px;
     border-radius: 15px;
@@ -122,7 +120,7 @@ body {
     max-width: 100%;
     animation: fadeIn 0.3s ease;
     
-    /* ADD THIS LINE BELOW */
+    /*for vertical arrange text */
     white-space: pre-wrap; 
 }
 /* user */
@@ -134,8 +132,6 @@ body {
     border-radius: 15px;
     padding: 15px 20px;
 }
-
-    
 
 /* bot */
 .bot {
@@ -190,6 +186,7 @@ body {
     cursor: pointer;
     transition: 0.3s;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+     border:1px solid var(--border-color);
 
 }
 
@@ -226,7 +223,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Smooth transition for hover and scale */
+    /* smooth transition for hover and scale */
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
 }
 

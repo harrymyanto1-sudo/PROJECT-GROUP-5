@@ -97,7 +97,7 @@ function getBotResponse(input) {
       if (input.includes("how do i make my own schedule") || input.includes("how to create schedule") || input.includes("i wanna make my own schedule") || input.includes("i wanna create my own schedule") || input.includes("how to make schedule")
          || input.includes("i want to create my schedule")) { 
 
-        return "You can manage your schedule with these commands:\n• 'create/add schedule [task]' to add a task\n• 'my schedule' to view your schedule\n• 'clear schedule' to reset your schedule";
+        return "You can manage your schedule with these commands:\n• Type \"create schedule [task/schedule]\" to add a task/schedule \n• Type \"my schedule\" to view your tasks/schedule\n• Type \"clear schedule\" to reset your tasks/schedule";
     }
     if (input.includes("my own schedule") || input.includes("my schedule")) {
         const list = getSchedule();
