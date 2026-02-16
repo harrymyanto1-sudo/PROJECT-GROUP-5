@@ -193,7 +193,7 @@ function getBotResponse(input) {
     }
 
     if (input.includes("you know me")) {
-        return "No, I'm just a simple AI CHATBOT but you can ask me what time/date is it right now!";
+        return "No, I'm just a simple AI CHATBOT but you can ask me anything and I'll do my best to assist you!";
     }
 
     if (input.includes("your name")) {
