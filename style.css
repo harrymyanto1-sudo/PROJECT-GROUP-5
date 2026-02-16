@@ -43,6 +43,9 @@ body {
     
     
 }
+
+
+
 .chat-container::-webkit-scrollbar {
     width: 8px; /* scrollbar thickness */
 }
@@ -79,7 +82,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;  
-    
+    scroll-behavior: smooth;
 }
 
 /* chat box */
@@ -110,6 +113,7 @@ body {
 }
 
 /* messages */
+/* Update your existing .message class */
 .message {
     padding: 15px 20px;
     border-radius: 15px;
@@ -117,9 +121,10 @@ body {
     font-size: 15px;
     max-width: 100%;
     animation: fadeIn 0.3s ease;
-
+    
+    /* ADD THIS LINE BELOW */
+    white-space: pre-wrap; 
 }
-
 /* user */
 .user {
     align-self: flex-end;

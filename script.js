@@ -6,7 +6,7 @@ const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const welcomeMessage = document.getElementById("welcomeMessage");
 
-// load saved chat
+// load saved chat/theme
 window.onload = function () {
     const savedTheme = localStorage.getItem("theme");
 
@@ -77,22 +77,59 @@ function addBotMessage(text) {
     scrollToBottom();
 }
 
+function getSchedule() {
+    const saved = localStorage.getItem("chat_schedule");
+    return saved ? JSON.parse(saved) : [];
+}
+
+function saveSchedule(list) {
+    localStorage.setItem("chat_schedule", JSON.stringify(list));
+}
+
+
+
 //this is our rule based responses
-let gameActive = false; // track if game is active
 
 function getBotResponse(input) {
     input = input.toLowerCase().trim();
 
-    // 1. Logic to START the game
+    // 1. VIEW SCHEDULE
+      if (input.includes("how do i make my own schedule") || input.includes("how to create schedule") || input.includes("i wanna make my own schedule") || input.includes("i wanna create my own schedule") || input.includes("how to make schedule")
+         || input.includes("i want to create my schedule")) { 
+
+        return "You can manage your schedule with these commands:\n• 'create/add schedule [task]' to add a task\n• 'my schedule' to view your schedule\n• 'clear schedule' to reset your schedule";
+    }
+    if (input.includes("my own schedule") || input.includes("my schedule")) {
+        const list = getSchedule();
+        if (list.length === 0) return "Your schedule is empty! Type 'create/add schedule [task/schedule]' to put something on the list📅.";
+        let response = "Here is your tasks/schedule📅: \n";
+        list.forEach((item, index) => {
+            response += `${index + 1}. ${item}\n`;
+        });
+        return response + "\n(You can say 'clear tasks/schedule' to reset)";
+    }
+
+    // 2. ADD TO SCHEDULE
+    if (input.includes("create schedule") || input.includes("add schedule") || input.includes("add this schedule")) {
+        const task = input.replace("create schedule", "").replace("add schedule", "").replace("add this schedule", "").trim();
+        if (task.length < 2) return "Please specify a tasks/schedule to add.";
+        const list = getSchedule();
+        list.push(task);
+        saveSchedule(list);
+        return `✅ Added to schedule: "${task}"`;
+    }
+
+
    // --- ROCK PAPER SCISSORS GAME ---
+   let gameActive = false; 
     if (input.includes("play") || input === "game") {
         gameActive = true;
         return "Let's play a quick round! Choose: rock, paper, or scissors 🪨📄✂️";
     }
     if (input === "rock" || input === "paper" || input === "scissors") {
-        // Only run if the user actually asked to play first
+        // only run if the user actually asked to play first
         if (!gameActive) {
-            return "We aren't playing right now. Say 'play/game' to start a round!";
+            return "We aren't playing right now. Say \"play\" \"game\" to start a round!";
         }
 
         const choices = ["rock", "paper", "scissors"];
@@ -117,13 +154,11 @@ function getBotResponse(input) {
             result = "I win! 😎";
         }
 
-        // --- KEY CHANGE HERE ---
         gameActive = false; // This automatically turns the game off after one result
         
         return `You chose ${emoji[input]} | I chose ${emoji[botChoice]} → ${result}\nGame over! What else can I do for you?`;
     }
 
-    // 4. NORMAL RESPONSES (These work regardless of game state)
     if (input.includes("hello") || input.includes("hi") || input.includes("hey")) {
         return "Hello! I'm AI CHATBOT";
     }
@@ -131,6 +166,10 @@ function getBotResponse(input) {
     if (input.includes("how are you")) {
         return "I'm normally good and ready to assist!";
         
+    }
+
+    if (input.includes("what can you do") || input.includes("help me")) {
+        return "I can help you stay organized! Try:\n• Managing a schedule\n• Playing Rock Paper Scissors\n• Telling you the time/date\n• Giving you motivation!";
     }
 
     if (input.includes("you know me")) {
@@ -152,6 +191,15 @@ function getBotResponse(input) {
         return "Current time is " + new Date().toLocaleTimeString();
     }
 
+ if (input.includes("schedule")) {
+        return "You can manage your schedule with these commands:\n• 'create/add schedule [task]' to add a task\n• 'my schedule' to view your schedule\n• 'clear schedule' to reset your schedule";
+    }
+    // 3. CLEAR SCHEDULE
+    if (input.includes("clear schedule")) {
+        localStorage.removeItem("chat_schedule");
+        return "System: Schedule has been wiped clean. 🧹";
+    }
+
     if (input.includes("date")) {
         return "Today's date is " + new Date().toLocaleDateString();
     }
@@ -160,9 +208,9 @@ function getBotResponse(input) {
         return "Goodbye! Have a great day!";
     }
 
-    return "Sorry I don't understand that. Try asking something else.";
+    // Default fallback
+    return "Sorry I don't understand. Try asking something else.";
 }
-
 
 // savechat
 function saveChat() {
