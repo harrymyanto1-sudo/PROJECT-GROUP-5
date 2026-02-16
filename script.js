@@ -89,7 +89,7 @@ function saveSchedule(list) {
 
 
 //this is our rule based responses
-
+let gameActive = false; 
 function getBotResponse(input) {
     input = input.toLowerCase().trim();
 
@@ -121,7 +121,6 @@ function getBotResponse(input) {
 
 
    // --- ROCK PAPER SCISSORS GAME ---
-   let gameActive = false; 
     if (input.includes("play") || input === "game") {
         gameActive = true;
         return "Let's play a quick round! Choose: rock, paper, or scissors 🪨📄✂️";
@@ -212,7 +211,11 @@ function getBotResponse(input) {
         return "Current time is " + new Date().toLocaleTimeString();
     }
 
- if (input.includes("schedule")) {
+    if (input.includes("thanks") || input.includes("thank you")) {
+        return "You're welcome! If you have any more questions or need assistance, feel free to ask.";
+    }
+    
+    if (input.includes("schedule")) {
         return "You can manage your schedule with these commands:\n• 'create/add schedule [task]' to add a task\n• 'my schedule' to view your schedule\n• 'clear schedule' to reset your schedule";
     }
     // 3. CLEAR SCHEDULE
