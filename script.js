@@ -167,7 +167,7 @@ function getBotResponse(input) {
         
     }
 
-    if (input.includes("what can you do") || input.includes("help me")) {
+    if (input.includes("what can you do") || input.includes("assist me") || input.includes("help me")) {
         return "I can help you stay organized! Try:\n• Managing a schedule\n• Playing Rock Paper Scissors\n• Telling you the time/date\n• Giving you motivation!";
     }
 
