@@ -158,9 +158,6 @@ function getBotResponse(input) {
         return `You chose ${emoji[input]} | I chose ${emoji[botChoice]} → ${result}\nGame over! What else can I do for you?`;
     }
 
-    if (input.includes("hello") || input.includes("hi") || input.includes("hey")) {
-        return "Hello! I'm AI CHATBOT";
-    }
 
     if (input.includes("how are you")) {
         return "I'm normally good and ready to assist!";
@@ -171,7 +168,7 @@ function getBotResponse(input) {
         return "I can help you stay organized! Try:\n• Managing a schedule\n• Playing Rock Paper Scissors\n• Telling you the time/date\n• Giving you motivation!";
     }
 
-    if (input === "quote" || input.includes("motivate me")) {
+    if (input.includes("quote for me") || input.includes("motivate me")) {
         const quotes = [
             "Believe you can and you're halfway there.",
             "Your limitation—it’s only your imagination.",
@@ -198,6 +195,11 @@ function getBotResponse(input) {
 
     if (input.includes("your name")) {
         return "I am AI CHATBOT your virtual assistant.";
+    }
+
+     if (input.startsWith("hello") || input.startsWith("hi") || input.startsWith("hey")) {
+        return "Hello! I'm AI CHATBOT";
+        
     }
 
       if (input.includes("date and time")) {
