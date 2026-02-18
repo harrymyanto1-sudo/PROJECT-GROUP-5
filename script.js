@@ -75,6 +75,7 @@ function addBotMessage(text) {
     chatBox.appendChild(div);
     saveChat();
     scrollToBottom();
+    
 }
 
 function getSchedule() {
@@ -106,7 +107,7 @@ function getBotResponse(input) {
         list.forEach((item, index) => {
             response += `${index + 1}. ${item}\n`;
         });
-        return response + "\n(You can say 'clear tasks/schedule' to reset)";
+        return response + "\n•You can Type \"clear schedule\" to reset\n•You can Type \"create/add schedule [task/schedule]\" to create a task/schedule";
     }
 
     // 2. ADD TO SCHEDULE
@@ -125,7 +126,10 @@ function getBotResponse(input) {
         gameActive = true;
         return "Let's play a quick round! Choose: rock, paper, or scissors 🪨📄✂️";
     }
-    if (input === "rock" || input === "paper" || input === "scissors") {
+    if (input === "rock" || input === "paper" || input === "scissors" || input === "scissor") {
+        if (input === "scissor") {
+            input = "scissors";
+        }
         // only run if the user actually asked to play first
         if (!gameActive) {
             return "We aren't playing right now. Say \"play\" \"game\" to start a round!";
@@ -168,7 +172,7 @@ function getBotResponse(input) {
         return "I can help you stay organized! Try:\n• Managing a schedule\n• Playing Rock Paper Scissors\n• Telling you the time/date\n• Giving you motivation!";
     }
 
-    if (input.includes("quote for me") || input.includes("motivate me")) {
+    if (input.includes("quote for me") || input.includes("motivate me") || input.includes("give me motivation") || input.includes("give me a quote") || input.includes("i need motivation") || input.includes("i need inspiration")) {
         const quotes = [
             "Believe you can and you're halfway there.",
             "Your limitation—it’s only your imagination.",
@@ -281,3 +285,7 @@ themeToggle.addEventListener("click", () => {
         localStorage.setItem("theme", "dark");
     }
 });
+
+
+
+
