@@ -40,8 +40,34 @@ body {
     align-items: center;
     background: rgba(255,255,255,0.08);
     border-bottom: 1px solid var(--border-color);
-    
-    
+}
+
+/* logo container */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* logo icon */
+.logo-icon {
+    color: #00c6ff;
+    filter: drop-shadow(0 2px 4px rgba(0, 198, 255, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.logo-icon:hover {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* logo text */
+.logo-text {
+    font-size: 18px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #00c6ff, #1886b9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 
@@ -151,9 +177,10 @@ body {
     background: rgba(207, 207, 207, 0.08);
     border-top: 1px solid var(--border-color);
 
+
+
    
 }
-
 .input-area input {
     width: 70%;
     max-width: 500px;
@@ -191,9 +218,8 @@ body {
 }
 
 .input-area button:hover {
-    
     transform: scale(1.1);
-    
+    background: rgba(255, 255, 255, 0.3);    
 }
 
 
@@ -267,6 +293,22 @@ body.light-mode .app {
     box-shadow: 0 8px 25px rgba(0,0,0,0.05);
 }
 
+body.light-mode .header {
+    background: rgba(240, 240, 240, 0.9);
+}
+
+body.light-mode .logo-icon {
+    color: #4facfe;
+    filter: drop-shadow(0 2px 4px rgba(79, 172, 254, 0.3));
+}
+
+body.light-mode .logo-text {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 body.light-mode .bot {
     background: #f5f5f5;
     border: 1px solid var(--border-color);
@@ -276,6 +318,13 @@ body.light-mode .input-area input {
     background: #ffffff;
     border: 1px solid var(--border-color);
 }
+
+
+body.light-mode .input-area button:hover {
+    background: rgba(206, 206, 206, 0.1);    
+}
+
+
 
 body.light-mode .input-area button {
     background: #4facfe;
