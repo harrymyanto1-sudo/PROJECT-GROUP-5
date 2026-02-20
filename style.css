@@ -332,26 +332,6 @@ body.light-mode .input-area button {
     border: 1px solid var(--border-color);
 }
 
-body.light-mode .theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.5);
-    border: none;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
-    border: 1px solid var(--border-color);
-
-}
-
 body.light-mode .input-area input::placeholder {
     color: rgba(83, 83, 83, 0.7);
 }
