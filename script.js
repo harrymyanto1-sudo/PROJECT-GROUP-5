@@ -1,40 +1,171 @@
+// ========== AI CHATBOT FOR GROUP 5 ==========
+// ========== DOM ELEMENTS ==========
 const themeToggle = document.getElementById("themeToggle");
 const chatBox = document.getElementById("chatBox");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const welcomeMessage = document.getElementById("welcomeMessage");
 
+// ========== STATE VARIABLES ==========
+let currentUserEmail = null;
+let currentUserName = null;
+let scheduleList = [];
+let gameActive = false;
+
 // ========== INITIALIZATION ==========
 // Load saved chat and theme on page load
 window.onload = function () {
-    const savedTheme = localStorage.getItem("theme");
+    // Clear any leftover localStorage keys except account records
+    clearOtherLocalStorage();
 
-    if (savedTheme === "light") {
-        document.body.classList.add("light-mode");
-        themeToggle.textContent = "☀️";
-    }
+    // Show auth page initially (will be hidden on skip or successful login)
+    const authPage = document.getElementById("authPage");
+    if (authPage) authPage.classList.remove("hidden");
 
-    const savedChat = localStorage.getItem("aichathistoryyy");
-
-    if (savedChat) {
-        chatBox.innerHTML = savedChat;
-        welcomeMessage.style.display = "none";
-    } else {
-        addBotMessage(getTimeGreeting());
-    }
+    // initialize auth UI (accounts preserved)
+    initAuth();
+    chatBox.innerHTML = "";
+    welcomeMessage.style.display = "none";
+    // allow interaction without account by default
+    disableChatInteraction(false);
 };
+
+// ========== AUTHENTICATION LOGIC (BACKEND SIMULATION) ==========
+function getAccounts() {
+    const saved = localStorage.getItem("chat_accounts");
+    return saved ? JSON.parse(saved) : [];
+}
+
+function saveAccounts(list) {
+    localStorage.setItem("chat_accounts", JSON.stringify(list));
+}
+
+function findAccount(email) {
+    if (!email) return null;
+    const list = getAccounts();
+    return list.find(a => a.email.toLowerCase() === email.toLowerCase()) || null;
+}
+
+function createAccount(email, password, username) {
+    if (!validateEmail(email)) return { ok: false, message: "Invalid email" };
+    if (!password || password.length < 4) return { ok: false, message: "Password must be at least 4 characters" };
+    if (!username || username.length < 2) return { ok: false, message: "Username must be at least 2 characters" };
+    if (findAccount(email)) return { ok: false, message: "An account with that email already exists" };
+
+    const list = getAccounts();
+    list.push({ email: email.trim(), password: password, username: username.trim() });
+    saveAccounts(list);
+    return { ok: true };
+}
+
+function authenticate(email, password) {
+    const acc = findAccount(email);
+    if (!acc) return { ok: false, message: "No account found for that email" };
+    if (acc.password !== password) return { ok: false, message: "Incorrect password or email." };
+    return { ok: true };
+}
+
+// ========== DATA MANAGEMENT (LOCAL STORAGE) ==========
+// Load per-user persisted data (chat, schedule, theme) when available
+function loadUserData(email) {
+    try {
+        const chatKey = `aichathistory_${email}`;
+        const savedChat = localStorage.getItem(chatKey);
+        if (savedChat) {
+            chatBox.innerHTML = savedChat;
+            welcomeMessage.style.display = "none";
+        } else {
+            // show greeting if no saved chat
+            addBotMessage(getTimeGreeting());
+        }
+
+        const scheduleKey = `chat_schedule_${email}`;
+        const savedSchedule = localStorage.getItem(scheduleKey);
+        if (savedSchedule) {
+            try {
+                scheduleList = JSON.parse(savedSchedule);
+            } catch (e) {
+                scheduleList = [];
+            }
+        } else {
+            scheduleList = [];
+        }
+
+        const themeKey = `theme_${email}`;
+        const savedTheme = localStorage.getItem(themeKey);
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            themeToggle.textContent = "☀️";
+        } else if (savedTheme === 'dark') {
+            document.body.classList.remove('light-mode');
+            themeToggle.textContent = "🌙";
+        }
+    } catch (e) {
+        console.warn('loadUserData failed', e);
+    }
+}
+
+// Remove all localStorage entries except chat account records and user data
+function clearOtherLocalStorage() {
+    try {
+        const keep = ["chat_accounts", "last_auth_email"];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (!key) continue;
+            // Keep: accounts, last email, and all per-user data (chat, schedule, theme)
+            if (keep.includes(key) || 
+                key.startsWith("aichathistory_") || 
+                key.startsWith("chat_schedule_") || 
+                key.startsWith("theme_")) {
+                continue;
+            }
+            localStorage.removeItem(key);
+            // adjust index safely by restarting scan
+            i = -1;
+        }
+    } catch (e) {
+        // ignore security errors
+        console.warn('clearOtherLocalStorage failed', e);
+    }
+}
+
+function saveChat() {
+    // Persist chat only for signed-in user (per-user key)
+    if (!currentUserEmail) return;
+    try {
+        localStorage.setItem(`aichathistory_${currentUserEmail}`, chatBox.innerHTML);
+    } catch (e) {
+        console.warn('saveChat failed', e);
+    }
+}
+
+function saveSchedule(list) {
+    scheduleList = Array.isArray(list) ? list.slice() : [];
+    // persist per-user schedule only when signed in
+    if (!currentUserEmail) return;
+    try {
+        localStorage.setItem(`chat_schedule_${currentUserEmail}`, JSON.stringify(scheduleList));
+    } catch (e) {
+        console.warn('saveSchedule failed', e);
+    }
+}
+
+function getSchedule() {
+    return scheduleList.slice();
+}
 
 // ========== GREETING & MESSAGING ==========
 // Get time-based greeting message
 function getTimeGreeting() {
     const hour = new Date().getHours();
+    const name = currentUserName ? ` ${currentUserName}` : "";
 
     if (hour < 12) {
-        return "Good morning! I am AI CHATBOT. How can I help you?";
+        return `Good morning${name}! I am AI CHATBOT. How can I help you?`;
     } else if (hour < 18) {
-        return "Good afternoon! I am AI CHATBOT. How can I assist you?";
+        return `Good afternoon${name}! I am AI CHATBOT. How can I assist you?`;
     } else {
-        return "Good evening! I am AI CHATBOT. What can I do for you?";
+        return `Good evening${name}! I am AI CHATBOT. What can I do for you?`;
     }
 }
 
@@ -77,21 +208,7 @@ function addBotMessage(text) {
     scrollToBottom();
 }
 
-// ========== SCHEDULE MANAGEMENT ==========
-// Get schedule list from localStorage
-function getSchedule() {
-    const saved = localStorage.getItem("chat_schedule");
-    return saved ? JSON.parse(saved) : [];
-}
-
-// Save schedule list to localStorage
-function saveSchedule(list) {
-    localStorage.setItem("chat_schedule", JSON.stringify(list));
-}
-
 // ========== BOT RESPONSE ENGINE ==========
-// Track if game is currently active
-let gameActive = false; 
 function getBotResponse(input) {
     input = input.toLowerCase().trim();
 
@@ -105,6 +222,7 @@ function getBotResponse(input) {
 
         return "You can manage your schedule with these commands:\n• Type \"create schedule [task/schedule]\" to add a task/schedule \n• Type \"my schedule\" to view your tasks/schedule\n• Type \"clear schedule\" to reset your tasks/schedule";
     }
+    
     // 2. VIEW SCHEDULE
     if (input.includes("my own schedule") || input.includes("my schedule")) {
         const list = getSchedule();
@@ -130,7 +248,13 @@ function getBotResponse(input) {
         return `✅ Added to schedule: "${task}"`;
     }
 
-    // ===== ROCK PAPER SCISSORS GAME =====
+    // 4. CLEAR SCHEDULE
+    if (input.includes("clear schedule") || input.includes("reset schedule")) {
+        saveSchedule([]); // Clears both in-memory and localStorage schedule
+        return "🗑️ Your schedule has been cleared.";
+    }
+
+    // ===== ROCK PAPER SCISSORS GAMEEEE =====
     if (input.includes("play") || input === "game") {
         gameActive = true;
         return "Let's play a quick round! Choose: rock, paper, or scissors 🪨📄✂️";
@@ -167,7 +291,7 @@ function getBotResponse(input) {
             result = "I win! 😎";
         }
 
-        gameActive = false; // Game ends after one round
+        gameActive = false; // game ends after one round
         return `You chose ${emoji[input]} | I chose ${emoji[botChoice]} → ${result}\nGame over! What else can I do for you?`;
     }
 
@@ -179,7 +303,7 @@ function getBotResponse(input) {
     if (input.includes("what can you do") || 
         input.includes("assist me") || 
         input.includes("help me")) {
-        return "I can help you stay organized! Try:\n• Managing a schedule\n• Playing Rock Paper Scissors\n• Telling you the time/date\n• Giving you motivation!";
+        return "I can help you stay organized! Try:\n• Managing a schedule\n• Playing Rock Paper Scissors\n• Telling you the time/date\n• Giving you motivation";
     }
 
     if (input.includes("quote for me") || 
@@ -209,6 +333,9 @@ function getBotResponse(input) {
     }
 
     if (input.includes("you know me")) {
+        if (currentUserName) {
+            return `Yes, you are ${currentUserName}! How can I help you today?`;
+        }
         return "No, I'm just a simple AI CHATBOT but you can ask me anything and I'll do my best to assist you!";
     }
 
@@ -250,16 +377,257 @@ function getBotResponse(input) {
     return "Sorry I don't understand. Try asking something else.";
 }
 
-// ========== UTILITY FUNCTIONS ==========
-// Save chat history to localStorage
-function saveChat() {
-    localStorage.setItem("aichathistoryyy", chatBox.innerHTML);
+// ========== AUTH UI SETUP ==========
+function initAuth() {
+    const authPage = document.getElementById("authPage");
+    const authBar = document.getElementById("authBar");
+    
+    // Auth page elements
+    const authEmail = document.getElementById("authEmail");
+    const authUsername = document.getElementById("authUsername");
+    const authPassword = document.getElementById("authPassword");
+    const authSignInBtn = document.getElementById("authSignInBtn");
+    const authCreateBtn = document.getElementById("authCreateBtn");
+    const authSkipBtn = document.getElementById("authSkipBtn");
+    const authToggleLink = document.getElementById("authToggleLink");
+    const authPageTitle = document.getElementById("authPageTitle");
+    const authPageSubtitle = document.getElementById("authPageSubtitle");
+
+    // Restore saved email from localStorage
+    if (authEmail) {
+        const savedEmail = localStorage.getItem("last_auth_email");
+        if (savedEmail) {
+            authEmail.value = savedEmail;
+        }
+    }
+
+    // Header logout button
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userStatus = document.getElementById("userStatus");
+
+    if (!authPage) return; // nothing to do if markup missing
+
+    let isSignUpMode = false; // true = create account, false = sign in
+
+    function setMode(signUp) {
+        isSignUpMode = !!signUp;
+        const authWarning = document.getElementById("authWarning");
+        if (authWarning) authWarning.style.display = "none";
+        if (isSignUpMode) {
+            authPageTitle.textContent = "Create Account";
+            authPageSubtitle.textContent = "Sign up to save your chat and to remember your name";
+            authSignInBtn.style.display = "none";
+            authCreateBtn.style.display = "flex";
+            authToggleLink.textContent = "Already have an account? Sign in";
+            if (authUsername) authUsername.style.display = "block";
+        } else {
+            authPageTitle.textContent = "Welcome To AI CHATBOT\n(Group 5)";
+            authPageSubtitle.textContent = "Sign in to your account";
+            authSignInBtn.style.display = "flex";
+            authCreateBtn.style.display = "none";
+            authToggleLink.textContent = "Don't have an account? Create one";
+            if (authUsername) authUsername.style.display = "none";
+        }
+    }
+
+    // Toggle between sign-in and sign-up
+    if (authToggleLink) {
+        authToggleLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            setMode(!isSignUpMode);
+        });
+    }
+
+    // Skip to anonymous chat
+    if (authSkipBtn) {
+        authSkipBtn.addEventListener("click", () => {
+            currentUserEmail = null;
+            currentUserName = null;
+            if (authPage) authPage.classList.add("hidden");
+            if (authBar) authBar.style.display = "none";
+            const headerSignInBtn = document.getElementById("headerSignInBtn");
+            if (headerSignInBtn) headerSignInBtn.style.display = "inline-block";
+        });
+    }
+
+    // Sign in or create account from auth page
+    function handleAuthSubmit() {
+        const email = (authEmail ? authEmail.value : "").trim();
+        const pwd = (authPassword ? authPassword.value : "").trim();
+        const username = (authUsername ? authUsername.value : "").trim();
+
+        if (!validateEmail(email)) {
+            const authWarning = document.getElementById("authWarning");
+            if (authWarning) {
+                authWarning.textContent = " Please enter a valid email address (e.g., example@email.com)";
+                authWarning.style.display = "block";
+            }
+            return;
+        }
+
+        if (isSignUpMode) {
+            // Create account
+            const res = createAccount(email, pwd, username);
+            if (!res.ok) {
+                const authWarning = document.getElementById("authWarning");
+                if (authWarning) {
+                    authWarning.textContent = " " + res.message;
+                    authWarning.style.display = "block";
+                }
+                return;
+            
+            }
+            currentUserEmail = email;
+            currentUserName = username;
+            if (authPage) authPage.classList.add("hidden");
+            if (authBar) {
+                authBar.style.display = "flex";
+                userStatus.textContent = `Logged in as ${currentUserName}`;
+            }
+            const headerSignInBtn = document.getElementById("headerSignInBtn");
+            if (headerSignInBtn) headerSignInBtn.style.display = "none";
+
+            loadUserData(email);
+            //saving email to local storage
+            try { localStorage.setItem("last_auth_email", email); } catch (e) {}
+            showSuccessNotification(`Account created and signed in as ${email}`);
+        } else {
+            // sign in
+            const acc = findAccount(email);
+            if (acc) {
+                const res = authenticate(email, pwd);
+                if (!res.ok) {
+                    const authWarning = document.getElementById("authWarning");
+                    if (authWarning) {
+                        authWarning.textContent = " " + res.message;
+                        authWarning.style.display = "block";
+                    }
+                    return;
+                }
+                currentUserEmail = email;
+                currentUserName = acc.username || null;
+                if (authPage) authPage.classList.add("hidden");
+                if (authBar) {
+                    authBar.style.display = "flex";
+                    userStatus.textContent = `Logged in as ${currentUserName || email}`;
+                }
+                const headerSignInBtn = document.getElementById("headerSignInBtn");
+                if (headerSignInBtn) headerSignInBtn.style.display = "none";
+                loadUserData(email);
+                try { localStorage.setItem("last_auth_email", email); } catch (e) {}
+                showSuccessNotification(`Signed in as ${email}`);
+            } else {
+                // No account: show warning (prevent anonymous sign-in)
+                const authWarning = document.getElementById("authWarning");
+                if (authWarning) {
+                    authWarning.textContent = " No account found for that email";
+                    authWarning.style.display = "block";
+                }
+                return;
+            }
+        }
+    }
+
+    if (authSignInBtn) {
+        authSignInBtn.addEventListener("click", handleAuthSubmit);
+    }
+
+    if (authCreateBtn) {
+        authCreateBtn.addEventListener("click", handleAuthSubmit);
+    }
+
+    // Enter key to submit
+    [authEmail, authPassword, authUsername].forEach(el => {
+        if (!el) return;
+        el.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") handleAuthSubmit();
+        });
+    });
+
+    // Clear warning when user starts typing in email field + save email to localStorage
+    if (authEmail) {
+        authEmail.addEventListener("input", () => {
+            const authWarning = document.getElementById("authWarning");
+            if (authWarning) authWarning.style.display = "none";
+            // Save email to localStorage
+            if (authEmail.value.trim()) {
+                localStorage.setItem("last_auth_email", authEmail.value.trim());
+            }
+        });
+    }
+
+    // Header logout button
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            currentUserEmail = null;
+            currentUserName = null;
+            if (authPage) authPage.classList.remove("hidden");
+            if (authBar) authBar.style.display = "none";
+            chatBox.innerHTML = "";
+            addBotMessage("You have been logged out. You're now chatting anonymously.");
+        });
+    }
+
+    // Header sign-in button for anonymous users
+    const headerSignInBtn = document.getElementById("headerSignInBtn");
+    if (headerSignInBtn) {
+        headerSignInBtn.addEventListener("click", () => {
+            // Restore saved email and clear password
+            const savedEmail = localStorage.getItem("last_auth_email");
+            authEmail.value = savedEmail || "";
+            authPassword.value = "";
+            if (authUsername) authUsername.value = "";
+            setMode(false); // Default to sign-in mode
+            if (authPage) authPage.classList.remove("hidden");
+        });
+    }
+
+    // Default to sign-in mode
+    setMode(false);
 }
 
+// ========== UTILITY FUNCTIONS ==========
 // Auto-scroll chat to bottom
 function scrollToBottom() {
     chatBox.parentElement.scrollTop = chatBox.parentElement.scrollHeight;
+}
 
+// Show success notification
+function showSuccessNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Validate email format
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// Helper: is user signed in
+function isSignedIn() {
+    return !!currentUserEmail;
+}
+
+// Disable or enable chat interaction (UI + input)
+function disableChatInteraction(disabled) {
+    const app = document.querySelector('.app');
+    if (!app) return;
+    if (disabled) {
+        app.classList.add('locked');
+        if (userInput) userInput.disabled = true;
+        if (sendBtn) sendBtn.disabled = true;
+    } else {
+        app.classList.remove('locked');
+        if (userInput) userInput.disabled = false;
+        if (sendBtn) sendBtn.disabled = false;
+    }
 }
 
 // ========== EVENT LISTENERS ==========
@@ -280,7 +648,7 @@ themeToggle.addEventListener("click", () => {
     // Play the animation
     themeToggle.classList.add("rotate-animation");
     
-    // Remove the class after animation finishes (500ms) 
+    // remove the class after animation finishes (500ms) 
     // so it can be played again on next click
     setTimeout(() => {
         themeToggle.classList.remove("rotate-animation");
@@ -288,9 +656,9 @@ themeToggle.addEventListener("click", () => {
 
     if (document.body.classList.contains("light-mode")) {
         themeToggle.textContent = "☀️";
-        localStorage.setItem("theme", "light");
+        if (currentUserEmail) localStorage.setItem(`theme_${currentUserEmail}`, 'light');
     } else {
         themeToggle.textContent = "🌙";
-        localStorage.setItem("theme", "dark");
+        if (currentUserEmail) localStorage.setItem(`theme_${currentUserEmail}`, 'dark');
     }
 });
