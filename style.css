@@ -436,7 +436,7 @@ body.light-mode .success-notification {
 }
 
 .auth-toggle a {
-    color: #9ecbff;
+    color: #1e6fca;
     text-decoration: none;
     font-size: 13px;
 }
@@ -473,10 +473,6 @@ body.light-mode .auth-card input[type="password"] {
 body.light-mode .auth-card h2,
 body.light-mode .auth-card p {
     color: #333;
-}
-
-body.light-mode .btn-primary {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
 }
 
 body.light-mode .btn-secondary,
