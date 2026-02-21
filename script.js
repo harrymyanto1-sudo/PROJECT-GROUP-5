@@ -409,10 +409,17 @@ function initAuth() {
 
     let isSignUpMode = false; // true = create account, false = sign in
 
-    function setMode(signUp) {
+    function setMode(signUp, clearInputs = true) {
         isSignUpMode = !!signUp;
         const authWarning = document.getElementById("authWarning");
         if (authWarning) authWarning.style.display = "none";
+        
+        if (clearInputs) {
+            if (authEmail) authEmail.value = "";
+            if (authPassword) authPassword.value = "";
+            if (authUsername) authUsername.value = "";
+        }
+
         if (isSignUpMode) {
             authPageTitle.textContent = "Create Account";
             authPageSubtitle.textContent = "Sign up to save your chat and to remember your name";
@@ -491,6 +498,11 @@ function initAuth() {
             //saving email to local storage
             try { localStorage.setItem("last_auth_email", email); } catch (e) {}
             showSuccessNotification(`Account created and signed in as ${email}`);
+
+            // Clear inputs
+            if (authEmail) authEmail.value = "";
+            if (authPassword) authPassword.value = "";
+            if (authUsername) authUsername.value = "";
         } else {
             // sign in
             const acc = findAccount(email);
@@ -516,6 +528,11 @@ function initAuth() {
                 loadUserData(email);
                 try { localStorage.setItem("last_auth_email", email); } catch (e) {}
                 showSuccessNotification(`Signed in as ${email}`);
+
+                // Clear inputs
+                if (authEmail) authEmail.value = "";
+                if (authPassword) authPassword.value = "";
+                if (authUsername) authUsername.value = "";
             } else {
                 // No account: show warning (prevent anonymous sign-in)
                 const authWarning = document.getElementById("authWarning");
@@ -577,13 +594,13 @@ function initAuth() {
             authEmail.value = savedEmail || "";
             authPassword.value = "";
             if (authUsername) authUsername.value = "";
-            setMode(false); // Default to sign-in mode
+            setMode(false, false); // Default to sign-in mode
             if (authPage) authPage.classList.remove("hidden");
         });
     }
 
     // Default to sign-in mode
-    setMode(false);
+    setMode(false, false);
 }
 
 // ========== UTILITY FUNCTIONS ==========
