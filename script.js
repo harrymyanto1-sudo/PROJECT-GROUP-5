@@ -1,28 +1,28 @@
-// ========== AI CHATBOT FOR GROUP 5 ==========
-// ========== DOM ELEMENTS ==========
+// ========== ai chatbot for group 5 ==========
+// ========== dom elements ==========
 const themeToggle = document.getElementById("themeToggle");
 const chatBox = document.getElementById("chatBox");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const welcomeMessage = document.getElementById("welcomeMessage");
 
-// ========== STATE VARIABLES ==========
+// ========== state variables ==========
 let currentUserEmail = null;
 let currentUserName = null;
 let scheduleList = [];
 let gameActive = false;
 
-// ========== INITIALIZATION ==========
-// Load saved chat and theme on page load
+// ========== initialization ==========
+// load saved chat and theme on page load
 window.onload = function () {
-    // Clear any leftover localStorage keys except account records
+    // clear any leftover localstorage keys except account records
     clearOtherLocalStorage();
 
-    // Show auth page initially (will be hidden on skip or successful login)
+    // show auth page initially (will be hidden on skip or successful login)
     const authPage = document.getElementById("authPage");
     if (authPage) authPage.classList.remove("hidden");
 
-    // initialize auth UI (accounts preserved)
+    // initialize auth ui (accounts preserved)
     initAuth();
     chatBox.innerHTML = "";
     welcomeMessage.style.display = "none";
@@ -30,7 +30,7 @@ window.onload = function () {
     disableChatInteraction(false);
 };
 
-// ========== AUTHENTICATION LOGIC (BACKEND SIMULATION) ==========
+// ========== authentication logic (backend simulation) ==========
 function getAccounts() {
     const saved = localStorage.getItem("chat_accounts");
     return saved ? JSON.parse(saved) : [];
@@ -65,8 +65,8 @@ function authenticate(email, password) {
     return { ok: true };
 }
 
-// ========== DATA MANAGEMENT (LOCAL STORAGE) ==========
-// Load per-user persisted data (chat, schedule, theme) when available
+// ========== data management (local storage) ==========
+// load per-user persisted data (chat, schedule, theme) when available
 function loadUserData(email) {
     try {
         const chatKey = `aichathistory_${email}`;
@@ -105,14 +105,14 @@ function loadUserData(email) {
     }
 }
 
-// Remove all localStorage entries except chat account records and user data
+// remove all localstorage entries except chat account records and user data
 function clearOtherLocalStorage() {
     try {
         const keep = ["chat_accounts", "last_auth_email"];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (!key) continue;
-            // Keep: accounts, last email, and all per-user data (chat, schedule, theme)
+            // keep: accounts, last email, and all per-user data (chat, schedule, theme)
             if (keep.includes(key) || 
                 key.startsWith("aichathistory_") || 
                 key.startsWith("chat_schedule_") || 
@@ -130,7 +130,7 @@ function clearOtherLocalStorage() {
 }
 
 function saveChat() {
-    // Persist chat only for signed-in user (per-user key)
+    // persist chat only for signed-in user (per-user key)
     if (!currentUserEmail) return;
     try {
         localStorage.setItem(`aichathistory_${currentUserEmail}`, chatBox.innerHTML);
@@ -154,8 +154,8 @@ function getSchedule() {
     return scheduleList.slice();
 }
 
-// ========== GREETING & MESSAGING ==========
-// Get time-based greeting message
+// ========== greeting & messaging ==========
+// get time-based greeting message
 function getTimeGreeting() {
     const hour = new Date().getHours();
     const name = currentUserName ? ` ${currentUserName}` : "";
@@ -169,7 +169,7 @@ function getTimeGreeting() {
     }
 }
 
-// Send user message and get bot response
+// send user message and get bot response
 function sendMessage() {
     const message = userInput.value.trim();
     if (message === "") return;
@@ -186,7 +186,7 @@ function sendMessage() {
     userInput.value = "";
 }
 
-// Add user message to chat box
+// add user message to chat box
 function addUserMessage(text) {
     const div = document.createElement("div");
     div.classList.add("message", "user");
@@ -197,7 +197,7 @@ function addUserMessage(text) {
     scrollToBottom();
 }
 
-// Add bot message to chat box
+// add bot message to chat box
 function addBotMessage(text) {
     const div = document.createElement("div");
     div.classList.add("message", "bot");
@@ -208,11 +208,11 @@ function addBotMessage(text) {
     scrollToBottom();
 }
 
-// ========== BOT RESPONSE ENGINE ==========
+// ========== bot response engine ==========
 function getBotResponse(input) {
     input = input.toLowerCase().trim();
 
-    // 1. SCHEDULE CREATION HELP
+    // 1. schedule creation help
     if (input.includes("how do i make my own schedule") || 
         input.includes("how to create schedule") || 
         input.includes("i wanna make my own schedule") || 
@@ -223,7 +223,7 @@ function getBotResponse(input) {
         return "You can manage your schedule with these commands:\n• Type \"create schedule [task/schedule]\" to add a task/schedule \n• Type \"my schedule\" to view your tasks/schedule\n• Type \"clear schedule\" to reset your tasks/schedule";
     }
     
-    // 2. VIEW SCHEDULE
+    // 2. view schedule
     if (input.includes("my own schedule") || input.includes("my schedule")) {
         const list = getSchedule();
         if (list.length === 0) {
@@ -236,7 +236,7 @@ function getBotResponse(input) {
         return response + "\n•You can Type \"clear schedule\" to reset\n•You can Type \"create/add schedule [task/schedule]\" to create a task/schedule";
     }
 
-    // 3. ADD TO SCHEDULE
+    // 3. add to schedule
     if (input.includes("create schedule") || 
         input.includes("add schedule") || 
         input.includes("add this schedule")) {
@@ -248,13 +248,13 @@ function getBotResponse(input) {
         return ` Added to schedule: "${task}"`;
     }
 
-    // 4. CLEAR SCHEDULE
+    // 4. clear schedule
     if (input.includes("clear schedule") || input.includes("reset schedule")) {
-        saveSchedule([]); // Clears both in-memory and localStorage schedule
+        saveSchedule([]); // clears both in-memory and localstorage schedule
         return " Your schedule has been cleared.";
     }
 
-    // ===== ROCK PAPER SCISSORS GAMEEEE =====
+    // ===== rock paper scissors gameeee =====
     if (input.includes("play") || input === "game") {
         gameActive = true;
         return "Let's play a quick round! Choose: rock, paper, or scissors 🪨📄✂️";
@@ -295,7 +295,7 @@ function getBotResponse(input) {
         return `You chose ${emoji[input]} | I chose ${emoji[botChoice]} → ${result}\nGame over! What else can I do for you?`;
     }
 
-    // ===== GENERAL RESPONSES ======
+    // ===== general responses ======
     if (input.includes("how are you")) {
         return "I'm normally good and ready to assist!";
     }
@@ -377,7 +377,7 @@ function getBotResponse(input) {
     return `Sorry I don't understand${currentUserName ? " " + currentUserName : ""}. Try asking something else.`;
 }
 
-// ========== AUTH UI SETUP ==========
+// ========== auth ui setup ==========
 function initAuth() {
     const authPage = document.getElementById("authPage");
     const authBar = document.getElementById("authBar");
@@ -394,7 +394,7 @@ function initAuth() {
     const authPageSubtitle = document.getElementById("authPageSubtitle");
     const showPasswordToggle = document.getElementById("showPasswordToggle");
 
-    // restore saved email from localStorage
+    // restore saved email from localstorage
     if (authEmail) {
         const savedEmail = localStorage.getItem("last_auth_email");
         if (savedEmail) {
@@ -414,7 +414,7 @@ function initAuth() {
         isSignUpMode = !!signUp;
         const authWarning = document.getElementById("authWarning");
         if (authWarning) authWarning.style.display = "none";
-        // clears input  when switching between Sign In and Create Account modes
+        // clears input  when switching between sign in and create account modes
         if (clearInputs) {
             if (authEmail) authEmail.value = "";
             if (authPassword) {
@@ -442,7 +442,7 @@ function initAuth() {
         }
     }
 
-    // Toggle between sign-in and sign-up
+    // toggle between sign-in and sign-up
     if (authToggleLink) {
         authToggleLink.addEventListener("click", (e) => {
             e.preventDefault();
@@ -450,7 +450,7 @@ function initAuth() {
         });
     }
 
-    // Skip to anonymous chat
+    // skip to anonymous chat
     if (authSkipBtn) {
         authSkipBtn.addEventListener("click", () => {
             currentUserEmail = null;
@@ -462,7 +462,7 @@ function initAuth() {
         });
     }
 
-    // Sign in or create account from auth page
+    // sign in or create account from auth page
     function handleAuthSubmit() {
         const email = (authEmail ? authEmail.value : "").trim();
         const pwd = (authPassword ? authPassword.value : "").trim();
@@ -478,7 +478,7 @@ function initAuth() {
         }
 
         if (isSignUpMode) {
-            // Create account
+            // create account
             const res = createAccount(email, pwd, username);
             if (!res.ok) {
                 const authWarning = document.getElementById("authWarning");
@@ -534,12 +534,12 @@ function initAuth() {
                 try { localStorage.setItem("last_auth_email", email); } catch (e) {}
                 showSuccessNotification(`Signed in as ${email}`);
 
-                // Clear inputs
+                // clear inputs
                 if (authEmail) authEmail.value = "";
                 if (authPassword) authPassword.value = "";
                 if (authUsername) authUsername.value = "";
             } else {
-                // No account: show warning (prevent anonymous sign-in)
+                // no account: show warning (prevent anonymous sign-in)
                 const authWarning = document.getElementById("authWarning");
                 if (authWarning) {
                     authWarning.textContent = " No account found for that email";
@@ -573,19 +573,19 @@ function initAuth() {
         });
     });
 
-    // Clear warning when user starts typing in email field + save email to localStorage
+    // clear warning when user starts typing in email field + save email to localstorage
     if (authEmail) {
         authEmail.addEventListener("input", () => {
             const authWarning = document.getElementById("authWarning");
             if (authWarning) authWarning.style.display = "none";
-            // Save email to localStorage
+            // save email to localstorage
             if (authEmail.value.trim()) {
                 localStorage.setItem("last_auth_email", authEmail.value.trim());
             }
         });
     }
 
-    // Header logout button
+    // header logout button
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
             currentUserEmail = null;
@@ -597,11 +597,11 @@ function initAuth() {
         });
     }
 
-    // Header sign-in button for anonymous users
+    // header sign-in button for anonymous users
     const headerSignInBtn = document.getElementById("headerSignInBtn");
     if (headerSignInBtn) {
         headerSignInBtn.addEventListener("click", () => {
-            // Restore saved email and clear password
+            // restore saved email and clear password
             const savedEmail = localStorage.getItem("last_auth_email");
             authEmail.value = savedEmail || "";
             if (authPassword) {
@@ -610,45 +610,45 @@ function initAuth() {
             }
             if (showPasswordToggle) showPasswordToggle.checked = false;
             if (authUsername) authUsername.value = "";
-            setMode(false, false); // Default to sign-in mode
+            setMode(false, false); // default to sign-in mode
             if (authPage) authPage.classList.remove("hidden");
         });
     }
 
-    // Default to sign-in mode
+    // default to sign-in mode
     setMode(false, false);
 }
 
-// ========== UTILITY FUNCTIONS ==========
-// Auto-scroll chat to bottom
+// ========== dtility functions ==========
+// auto-scroll chat to bottom
 function scrollToBottom() {
     chatBox.parentElement.scrollTop = chatBox.parentElement.scrollHeight;
 }
 
-// Show success notification
+// show success notification
 function showSuccessNotification(message) {
     const notification = document.createElement('div');
     notification.className = 'success-notification';
     notification.textContent = message;
     document.body.appendChild(notification);
     
-    // Remove after 3 seconds
+    // remove after 3 seconds
     setTimeout(() => {
         notification.remove();
     }, 3000);
 }
 
-// Validate email format
+// validate email format
 function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// Helper: is user signed in
+// helper: is user signed in
 function isSignedIn() {
     return !!currentUserEmail;
 }
 
-// Disable or enable chat interaction (UI + input)
+// disable or enable chat interaction (ui + input)
 function disableChatInteraction(disabled) {
     const app = document.querySelector('.app');
     if (!app) return;
@@ -663,22 +663,22 @@ function disableChatInteraction(disabled) {
     }
 }
 
-// ========== EVENT LISTENERS ==========
-// Send message on button click
+// ========== event listeners ==========
+// send message on button click
 sendBtn.addEventListener("click", sendMessage);
 
-// Send message on Enter key
+// send message on enter key
 userInput.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
         sendMessage();
     }
 });
 
-// Toggle between light and dark theme
+// toggle between light and dark theme
 themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("light-mode");
 
-    // Play the animation
+    // play the animation
     themeToggle.classList.add("rotate-animation");
     
     // remove the class after animation finishes (500ms) 
