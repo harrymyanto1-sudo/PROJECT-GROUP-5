@@ -392,6 +392,7 @@ function initAuth() {
     const authToggleLink = document.getElementById("authToggleLink");
     const authPageTitle = document.getElementById("authPageTitle");
     const authPageSubtitle = document.getElementById("authPageSubtitle");
+    const showPasswordToggle = document.getElementById("showPasswordToggle");
 
     // restore saved email from localStorage
     if (authEmail) {
@@ -416,8 +417,12 @@ function initAuth() {
         // clears input  when switching between Sign In and Create Account modes
         if (clearInputs) {
             if (authEmail) authEmail.value = "";
-            if (authPassword) authPassword.value = "";
+            if (authPassword) {
+                authPassword.value = "";
+                authPassword.type = "password";
+            }
             if (authUsername) authUsername.value = "";
+            if (showPasswordToggle) showPasswordToggle.checked = false;
         }
 
         if (isSignUpMode) {
@@ -553,7 +558,14 @@ function initAuth() {
         authCreateBtn.addEventListener("click", handleAuthSubmit);
     }
 
-    // Enter key to submit
+    // toggle password visibility
+    if (showPasswordToggle && authPassword) {
+        showPasswordToggle.addEventListener("change", () => {
+            authPassword.type = showPasswordToggle.checked ? "text" : "password";
+        });
+    }
+
+    // enter key to submit
     [authEmail, authPassword, authUsername].forEach(el => {
         if (!el) return;
         el.addEventListener("keypress", function (e) {
@@ -592,7 +604,11 @@ function initAuth() {
             // Restore saved email and clear password
             const savedEmail = localStorage.getItem("last_auth_email");
             authEmail.value = savedEmail || "";
-            authPassword.value = "";
+            if (authPassword) {
+                authPassword.value = "";
+                authPassword.type = "password";
+            }
+            if (showPasswordToggle) showPasswordToggle.checked = false;
             if (authUsername) authUsername.value = "";
             setMode(false, false); // Default to sign-in mode
             if (authPage) authPage.classList.remove("hidden");
