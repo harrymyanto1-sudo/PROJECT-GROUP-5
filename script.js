@@ -229,7 +229,7 @@ function getBotResponse(input) {
         if (list.length === 0) {
             return "Your schedule is empty! Type 'create/add schedule [task/schedule]' to put something on the list📅.";
         }
-        let response = "Here is your tasks/schedule📅: \n";
+        let response = `Here is your tasks/schedule${currentUserName ? " " + currentUserName : ""}: \n`;
         list.forEach((item, index) => {
             response += `${index + 1}. ${item}\n`;
         });
@@ -245,13 +245,13 @@ function getBotResponse(input) {
         const list = getSchedule();
         list.push(task);
         saveSchedule(list);
-        return `✅ Added to schedule: "${task}"`;
+        return ` Added to schedule: "${task}"`;
     }
 
     // 4. CLEAR SCHEDULE
     if (input.includes("clear schedule") || input.includes("reset schedule")) {
         saveSchedule([]); // Clears both in-memory and localStorage schedule
-        return "🗑️ Your schedule has been cleared.";
+        return " Your schedule has been cleared.";
     }
 
     // ===== ROCK PAPER SCISSORS GAMEEEE =====
@@ -346,7 +346,7 @@ function getBotResponse(input) {
     if (input.startsWith("hello") || 
         input.startsWith("hi") || 
         input.startsWith("hey")) {
-        return "Hello! I'm AI CHATBOT";
+        return `Hello ${currentUserName ? currentUserName + "! " : ""}I'm AI CHATBOT`;
     }
 
     if (input.includes("date and time")) {
@@ -374,7 +374,7 @@ function getBotResponse(input) {
     }
 
     // default fallback
-    return "Sorry I don't understand. Try asking something else.";
+    return `Sorry I don't understand${currentUserName ? " " + currentUserName : ""}. Try asking something else.`;
 }
 
 // ========== AUTH UI SETUP ==========
@@ -405,7 +405,7 @@ function initAuth() {
     const logoutBtn = document.getElementById("logoutBtn");
     const userStatus = document.getElementById("userStatus");
 
-    if (authPage) return; // nothing to do if markup missing
+    if (!authPage) return;
 
     let isSignUpMode = false; // true = create account, false = sign in
 

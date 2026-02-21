@@ -449,6 +449,19 @@ body.light-mode .auth-card {
     background: #ffffff;
 }
 
+
+
+body.light-mode .auth-page {
+  background: #ffffff;
+
+}
+ 
+
+
+body.light-mode .auth-bar #logoutBtn {
+    background: rgba(0, 0, 0, 0.1);
+}
+
 body.light-mode .auth-card input[type="text"],
 body.light-mode .auth-card input[type="email"],
 body.light-mode .auth-card input[type="password"] {
@@ -505,8 +518,8 @@ body.light-mode .btn-skip {
     border-radius: 6px;
     border: 1px solid var(--border-color);
     background: rgba(255,255,255,0.06);
-    color: white;
     cursor: pointer;
+    color:inherit;
     font-size: 13px;
     transition: 0.2s;
 }
