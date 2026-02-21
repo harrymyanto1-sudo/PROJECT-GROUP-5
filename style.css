@@ -197,7 +197,7 @@ body {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 1000;
+    z-index: 3001;
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid var(--border-color);
     border-radius: 50%;
@@ -302,13 +302,9 @@ body.light-mode .input-area input {
     border: 1px solid var(--border-color);
 }
 
-body.light-mode .input-area button:hover {
-    background: #3da1ec;    
-}
 
 body.light-mode .input-area button {
-    background: #4facfe;
-    color: #fff;
+    background: linear-gradient(135deg, #00c6ff, #1886b9);
     border: 1px solid var(--border-color);
 }
 
@@ -332,9 +328,7 @@ body.light-mode .success-notification {
     position: fixed;
     inset: 0;
     background:
-        radial-gradient(circle at 20% 20%, rgba(94,138,255,0.14), transparent 12%),
-        radial-gradient(circle at 80% 80%, rgba(0,255,200,0.08), transparent 14%),
-        linear-gradient(135deg, rgba(4,18,40,0.92), rgba(8,30,60,0.9));
+    linear-gradient(135deg, rgba(4,18,40), rgba(8,30,60));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -375,7 +369,7 @@ body.light-mode .success-notification {
     opacity: 0.8;
     font-size: 14px;
 }
-
+ 
 .auth-card input[type="text"],
 .auth-card input[type="email"],
 .auth-card input[type="password"] {
@@ -409,6 +403,8 @@ body.light-mode .success-notification {
     color: white;
     place-items: center;
     border: 1px solid var(--border-color);
+        color: inherit;
+
 }
 
 .btn-primary:hover {
@@ -490,6 +486,7 @@ body.light-mode .btn-skip {
     font-size: 13px;
     font-weight: 500;
     transition: 0.2s;
+    color: inherit;
 }
 
 .header-signin-btn:hover {

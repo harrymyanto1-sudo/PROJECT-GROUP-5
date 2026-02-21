@@ -373,7 +373,7 @@ function getBotResponse(input) {
         return "Goodbye! Have a great day!";
     }
 
-    // Default fallback
+    // default fallback
     return "Sorry I don't understand. Try asking something else.";
 }
 
@@ -382,7 +382,7 @@ function initAuth() {
     const authPage = document.getElementById("authPage");
     const authBar = document.getElementById("authBar");
     
-    // Auth page elements
+    // auth page elements
     const authEmail = document.getElementById("authEmail");
     const authUsername = document.getElementById("authUsername");
     const authPassword = document.getElementById("authPassword");
@@ -393,7 +393,7 @@ function initAuth() {
     const authPageTitle = document.getElementById("authPageTitle");
     const authPageSubtitle = document.getElementById("authPageSubtitle");
 
-    // Restore saved email from localStorage
+    // restore saved email from localStorage
     if (authEmail) {
         const savedEmail = localStorage.getItem("last_auth_email");
         if (savedEmail) {
@@ -401,11 +401,11 @@ function initAuth() {
         }
     }
 
-    // Header logout button
+    // header logout button
     const logoutBtn = document.getElementById("logoutBtn");
     const userStatus = document.getElementById("userStatus");
 
-    if (!authPage) return; // nothing to do if markup missing
+    if (authPage) return; // nothing to do if markup missing
 
     let isSignUpMode = false; // true = create account, false = sign in
 
@@ -413,7 +413,7 @@ function initAuth() {
         isSignUpMode = !!signUp;
         const authWarning = document.getElementById("authWarning");
         if (authWarning) authWarning.style.display = "none";
-        
+        // clears input  when switching between Sign In and Create Account modes
         if (clearInputs) {
             if (authEmail) authEmail.value = "";
             if (authPassword) authPassword.value = "";
@@ -499,7 +499,7 @@ function initAuth() {
             try { localStorage.setItem("last_auth_email", email); } catch (e) {}
             showSuccessNotification(`Account created and signed in as ${email}`);
 
-            // Clear inputs
+            // clear inputs after successful sign-up
             if (authEmail) authEmail.value = "";
             if (authPassword) authPassword.value = "";
             if (authUsername) authUsername.value = "";
