@@ -371,7 +371,7 @@ function getBotResponse(input) {
         if (currentUserName) {
             return `Yes, you are ${currentUserName}! How can I help you today?`;
         }
-        return "No, I'm just a simple AI CHATBOT but you can ask me anything and I'll do my best to assist you!";
+        return "No, you're in Anonymous mode Sign in or create an account to save your name and chat history!";
     }
 
     if (input.includes("your name")) {
