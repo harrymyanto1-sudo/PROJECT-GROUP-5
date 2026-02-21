@@ -302,11 +302,46 @@ function getBotResponse(input) {
 
     if (input.includes("what can you do") || 
         input.includes("assist me") || 
-        input.includes("help me")) {
-        return "I can help you stay organized! Try:\n• Managing a schedule\n• Playing Rock Paper Scissors\n• Telling you the time/date\n• Giving you motivation";
+        input.includes("help me") ||
+        input === "help" ||
+        input.includes("commands")) {
+        return "I can help you with several things! You can Type:\n\n" +
+               "• Type 'create schedule [task]' to manage a schedule\n" +
+               "• Type 'play game' to play Rock Paper Scissors\n" +
+               "• Type 'what time is it?' to check time/date\n" +
+               "• Type 'give me a quote' for motivation\n" +
+               "• Type 'tell me a joke' for a laugh\n" +
+               "• Type 'calculate 5 + 10' for simple math\n";
+        }
+        
+
+    if (input.includes("tell me a joke")) {
+        const jokes = [
+            "Why don't scientists trust atoms? Because they make up everything!",
+            "I told my wife she was drawing her eyebrows too high. She looked surprised.",
+            "What do you call a fake noodle? An Impasta!",
+            "Why did the scarecrow win an award? Because he was outstanding in his field!",
+            "Why don't skeletons fight each other? They don't have the guts."
+        ];
+        return "😂 " + jokes[Math.floor(Math.random() * jokes.length)];
     }
 
-    if (input.includes("quote for me") || 
+    if (input.startsWith("calculate ") || input.startsWith("what is ")) {
+        // WARNING: Using new Function() can be a security risk if not handled carefully.
+        // This is a simplified example for a controlled environment.
+        let expression = input.replace("calculate ", "").replace("what is ", "").replace("?", "").trim();
+        try {
+            const validChars = /^[0-9\.\+\-\*\/\(\) ]+$/;
+            if (!validChars.test(expression) || expression === "") throw new Error("Invalid expression");
+            const result = new Function('return ' + expression)();
+            if (isNaN(result) || !isFinite(result)) throw new Error("Invalid calculation result");
+            return `The answer is ${result}.`;
+        } catch (e) {
+            return "I can only do simple math. Please ask something like 'calculate 5 + 5'.";
+        }
+    }
+
+    if (input.includes("quote for me") ||
         input.includes("motivate me") || 
         input.includes("give me motivation") || 
         input.includes("give me a quote") || 
