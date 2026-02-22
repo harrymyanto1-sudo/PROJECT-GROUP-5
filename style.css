@@ -417,6 +417,9 @@ body.light-mode .logout-notification {
 .auth-card h2 {
     margin: 0 0 8px 0;
     font-size: 28px;
+    
+    white-space: pre-wrap; /*for animation title*/
+    animation: titleEntry 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .auth-card p {
@@ -630,4 +633,15 @@ body.light-mode .btn-skip {
     0% { transform: rotate(0deg) scale(1); }
     50% { transform: rotate(180deg) scale(1.3); } /* pops out slightly mid-spin */
     100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes titleEntry {
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px) scale(0.9); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+    }
 }
