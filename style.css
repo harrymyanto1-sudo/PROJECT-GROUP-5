@@ -1,3 +1,4 @@
+
 /* ====================
    1. root & general styles
    ================ */
@@ -18,7 +19,8 @@
     --logo-text-gradient: linear-gradient(135deg, #00c6ff, #1886b9);
     --placeholder-color: rgb(255, 255, 255);
     /* Sizes & Positions */
-    --app-max-width: 800px;
+    --app-max-width: 800px; /* Controls the maximum width of the app container */
+    --chat-width: 600px; /* Controls max width of chat content */
     --app-height: 95vh;
     --padding-base: 20px;
     --radius-lg: 20px;
@@ -40,8 +42,8 @@ body {
    2. app layout & structure
    =========================== */
 .app {
-    width: 100%;
-    max-width: var(--app-max-width);
+    width: 100%; /* Allows the app to shrink (squeeze) on smaller screens */
+    max-width: var(--app-max-width); /* Prevents the app from getting too wide on large screens */
     height: var(--app-height);
     display: flex;
     flex-direction: column;
@@ -174,7 +176,7 @@ body {
    5. input area
    ======================================== */
 .input-wrapper {
-    width: 70%;
+    flex: 1;
     max-width: var(--chat-width);
     display: flex;
     position: relative;
@@ -417,9 +419,7 @@ body.light-mode .logout-notification {
 .auth-card h2 {
     margin: 0 0 8px 0;
     font-size: 28px;
-    
-    white-space: pre-wrap; /*for animation title*/
-    animation: titleEntry 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: titleEntry 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /*for animation title*/
 }
 
 .auth-card p {
@@ -437,7 +437,7 @@ body.light-mode .logout-notification {
     border: 1px solid var(--border-color);
     background: rgba(255,255,255,0.02);
     color: inherit;
-    box-sizing: border-box;
+    box-sizing: border-box; /*reason why it cant be squeez of my website*/
 }
 
 .password-input-container {
@@ -446,7 +446,7 @@ body.light-mode .logout-notification {
 }
 
 .password-input-container input {
-    padding-right: 40px !important; /* Ensure space for the eye icon */
+    padding-right: 40px !important; /* ensure space for the eye icon */
 }
 
 .password-toggle-btn {
