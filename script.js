@@ -687,11 +687,11 @@ function scrollToBottom() {
 
 // show success notification
 function showSuccessNotification(message) {
+    // remove existing notification if any to prevent stacking
     const existingLogoutNotification = document.querySelector('.logout-notification');
     if (existingLogoutNotification) {
         existingLogoutNotification.remove();
     }
-
     const notificationsuccess = document.createElement('div');
     notificationsuccess.className = 'success-notification';
     notificationsuccess.textContent = message;
