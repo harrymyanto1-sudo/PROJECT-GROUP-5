@@ -98,10 +98,8 @@ function loadUserData(email) {
         const savedTheme = localStorage.getItem(themeKey);
         if (savedTheme === 'light') {
             document.body.classList.add('light-mode');
-            themeToggle.textContent = "☀️";
         } else if (savedTheme === 'dark') {
             document.body.classList.remove('light-mode');
-            themeToggle.textContent = "🌙";
         }
     } catch (e) {
         console.warn('loadUserData failed', e);
@@ -839,12 +837,8 @@ themeToggle.addEventListener("click", () => {
     }, 500);
 
     if (document.body.classList.contains("light-mode")) {
-        themeToggle.textContent = "☀️";
         if (currentUserEmail) localStorage.setItem(`theme_${currentUserEmail}`, 'light');
     } else {
-        themeToggle.textContent = "🌙";
         if (currentUserEmail) localStorage.setItem(`theme_${currentUserEmail}`, 'dark');
     }
 });
-
-
