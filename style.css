@@ -54,6 +54,7 @@ body {
 .input-area {
     display: flex;
     justify-content: center;
+    align-items: center;
     padding: 20px;
     background: rgba(207, 207, 207, 0.08);
     border-top: 1px solid var(--border-color);
@@ -152,42 +153,85 @@ body {
 /* ========================================
    5. input area
    ======================================== */
-.input-area input {
+.input-wrapper {
     width: 70%;
-    max-width: 500px;
-    padding: 14px 18px;
-    border-radius: 30px;
-    border: none;
-    outline: none;
-    font-size: 15px;
+    max-width: 600px;
+    display: flex;
+    position: relative;
+    align-items: center;
     background: rgb(255,255,255,0.1);
+    border-radius: 30px;
+    border: 1px solid var(--border-color);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    border:1px solid var(--border-color);
+    padding: 5px 10px;
 }
 
-.input-area input::placeholder {
-    color: rgb(255, 255, 255);
+.input-area input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    padding: 10px 50px 10px 15px;
+    font-size: 15px;
+    width: auto;
+    max-width: none;
+    box-shadow: none;
 }
-.input-area input[type="text"] {
-    color: inherit; /* inherit text white in dark mode */
+
+.input-wrapper input::placeholder {
+    color: rgb(255, 255, 255);
 }
 
 .input-area button {
-    margin-left: 10px;
-    padding: 14px 20px;
-    border-radius: 30px;
-    border: none;
-    background: rgb(255,255,255,0.1);
-    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+    padding: 8px;
+    margin: 0 5px;
+    color: rgba(255,255,255,0.7);
     cursor: pointer;
-    transition: 0.3s;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    border:1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.input-area .send-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    margin: 0;
+    color: #00c6ff;
+    z-index: 10;
 }
 
 .input-area button:hover {
     transform: scale(1.1);
-    background: rgba(255, 255, 255, 0.3);    
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.input-area .send-btn:hover {
+    background: transparent;
+    transform: translateY(-50%) scale(1.1);
+    color: #ffffff;
+}
+
+.input-area .mic-btn.listening {
+    background-color: #ff4b4b;
+    animation: pulse 1.5s infinite;
+    border-color: #ff4b4b;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.7); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 75, 75, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); }
 }
 
 /* ========================================
@@ -233,7 +277,20 @@ body {
     color: white;
     padding: 16px 24px;
     border-radius: 4px;
-    z-index: 10000;
+    z-index: 100;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.logout-notification {
+    position: fixed;
+    top: 20px;
+    right: 100px;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 4px;
+    z-index: 3002;
     font-size: 14px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
@@ -297,9 +354,13 @@ body.light-mode .input-area {
     background: #f9f9f9;
 }
 
-body.light-mode .input-area input {
+body.light-mode .input-wrapper {
     background: #ffffff;
-    border: 1px solid var(--border-color);
+}
+
+body.light-mode .input-area input {
+    background: transparent;
+    border: none;
 }
 
 
@@ -307,6 +368,13 @@ body.light-mode .input-area button {
     background: linear-gradient(135deg, #00c6ff, #1886b9);
     border: 1px solid var(--border-color);
 }
+
+
+body.light-mode .input-area .send-btn {
+    background: transparent;
+    border: none;
+}
+
 
 body.light-mode .input-area input::placeholder {
     color: rgba(83, 83, 83, 0.7);
@@ -317,6 +385,10 @@ body.light-mode .theme-toggle {
 }
 
 body.light-mode .success-notification {
+   border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.1);
+}
+body.light-mode .logout-notification {
    border: 1px solid var(--border-color);
     background: rgba(0, 0, 0, 0.1);
 }
@@ -380,6 +452,36 @@ body.light-mode .success-notification {
     background: rgba(255,255,255,0.02);
     color: inherit;
     box-sizing: border-box;
+}
+
+.password-input-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-container input {
+    padding-right: 40px !important; /* Ensure space for the eye icon */
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    z-index: 2;
+}
+
+.password-toggle-btn:hover {
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .auth-buttons {
@@ -472,6 +574,14 @@ body.light-mode .auth-card input[type="password"] {
 
 body.light-mode .auth-card h2,
 body.light-mode .auth-card p {
+    color: #333;
+}
+
+body.light-mode .password-toggle-btn {
+    color: #888;
+}
+
+body.light-mode .password-toggle-btn:hover {
     color: #333;
 }
 

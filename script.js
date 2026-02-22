@@ -5,12 +5,15 @@ const chatBox = document.getElementById("chatBox");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const welcomeMessage = document.getElementById("welcomeMessage");
+const micBtn = document.getElementById("micBtn");
+const speakerBtn = document.getElementById("speakerBtn");
 
 // ========== state variables ==========
 let currentUserEmail = null;
 let currentUserName = null;
 let scheduleList = [];
 let gameActive = false;
+let isTextToSpeechEnabled = false;
 
 // ========== initialization ==========
 // load saved chat and theme on page load
@@ -45,11 +48,11 @@ function findAccount(email) {
     const list = getAccounts();
     return list.find(a => a.email.toLowerCase() === email.toLowerCase()) || null;
 }
-
+// returns {ok: bool, message: string} for success or failure with reason
 function createAccount(email, password, username) {
     if (!validateEmail(email)) return { ok: false, message: "Invalid email" };
-    if (!password || password.length < 4) return { ok: false, message: "Password must be at least 4 characters" };
-    if (!username || username.length < 2) return { ok: false, message: "Username must be at least 2 characters" };
+    if (!password || password.length < 8) return { ok: false, message: "Password must be at least 8 characters" };
+    if (!username || username.length < 10) return { ok: false, message: "Username must be at least 10 characters" };
     if (findAccount(email)) return { ok: false, message: "An account with that email already exists" };
 
     const list = getAccounts();
@@ -206,6 +209,7 @@ function addBotMessage(text) {
     chatBox.appendChild(div);
     saveChat();
     scrollToBottom();
+    speakText(text);
 }
 
 // ========== bot response engine ==========
@@ -457,7 +461,12 @@ function initAuth() {
                 authPassword.type = "password";
             }
             if (authUsername) authUsername.value = "";
-            if (showPasswordToggle) showPasswordToggle.checked = false;
+            if (showPasswordToggle) {
+                const eyeOpen = showPasswordToggle.querySelector('.eye-icon-open');
+                const eyeClosed = showPasswordToggle.querySelector('.eye-icon-closed');
+                if(eyeOpen) eyeOpen.style.display = "block";
+                if(eyeClosed) eyeClosed.style.display = "none";
+            }
         }
 
         if (isSignUpMode) {
@@ -506,7 +515,7 @@ function initAuth() {
         if (!validateEmail(email)) {
             const authWarning = document.getElementById("authWarning");
             if (authWarning) {
-                authWarning.textContent = " Please enter a valid email address (e.g., example@email.com)";
+                authWarning.textContent = " Please enter a valid email address (example@email.com)";
                 authWarning.style.display = "block";
             }
             return;
@@ -538,7 +547,6 @@ function initAuth() {
             //saving email to local storage
             try { localStorage.setItem("last_auth_email", email); } catch (e) {}
             showSuccessNotification(`Account created and signed in as ${email}`);
-
             // clear inputs after successful sign-up
             if (authEmail) authEmail.value = "";
             if (authPassword) authPassword.value = "";
@@ -595,8 +603,21 @@ function initAuth() {
 
     // toggle password visibility
     if (showPasswordToggle && authPassword) {
-        showPasswordToggle.addEventListener("change", () => {
-            authPassword.type = showPasswordToggle.checked ? "text" : "password";
+        showPasswordToggle.addEventListener("click", (e) => {
+            e.preventDefault();
+            const isPassword = authPassword.type === "password";
+            authPassword.type = isPassword ? "text" : "password";
+            
+            const eyeOpen = showPasswordToggle.querySelector('.eye-icon-open');
+            const eyeClosed = showPasswordToggle.querySelector('.eye-icon-closed');
+            
+            if (isPassword) {
+                if(eyeOpen) eyeOpen.style.display = "none";
+                if(eyeClosed) eyeClosed.style.display = "block";
+            } else {
+                if(eyeOpen) eyeOpen.style.display = "block";
+                if(eyeClosed) eyeClosed.style.display = "none";
+            }
         });
     }
 
@@ -628,9 +649,10 @@ function initAuth() {
             if (authPage) authPage.classList.remove("hidden");
             if (authBar) authBar.style.display = "none";
             chatBox.innerHTML = "";
-            addBotMessage("You have been logged out. You're now chatting anonymously.");
-        });
-    }
+            showLogoutNotification("You have been logged out.");
+
+         
+    }); }
 
     // header sign-in button for anonymous users
     const headerSignInBtn = document.getElementById("headerSignInBtn");
@@ -643,7 +665,12 @@ function initAuth() {
                 authPassword.value = "";
                 authPassword.type = "password";
             }
-            if (showPasswordToggle) showPasswordToggle.checked = false;
+            if (showPasswordToggle) {
+                const eyeOpen = showPasswordToggle.querySelector('.eye-icon-open');
+                const eyeClosed = showPasswordToggle.querySelector('.eye-icon-closed');
+                if(eyeOpen) eyeOpen.style.display = "block";
+                if(eyeClosed) eyeClosed.style.display = "none";
+            }
             if (authUsername) authUsername.value = "";
             setMode(false, false); // default to sign-in mode
             if (authPage) authPage.classList.remove("hidden");
@@ -662,14 +689,31 @@ function scrollToBottom() {
 
 // show success notification
 function showSuccessNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'success-notification';
-    notification.textContent = message;
-    document.body.appendChild(notification);
+    const existingLogoutNotification = document.querySelector('.logout-notification');
+    if (existingLogoutNotification) {
+        existingLogoutNotification.remove();
+    }
+
+    const notificationsuccess = document.createElement('div');
+    notificationsuccess.className = 'success-notification';
+    notificationsuccess.textContent = message;
+    document.body.appendChild(notificationsuccess);
     
     // remove after 3 seconds
     setTimeout(() => {
-        notification.remove();
+        notificationsuccess.remove();
+    }, 3000);
+}
+// show logged out notification
+function showLogoutNotification(message) {
+    const notificationloggedout = document.createElement('div');
+    notificationloggedout.className = 'logout-notification';
+    notificationloggedout.textContent = message;
+    document.body.appendChild(notificationloggedout);
+    
+    // remove after 3 seconds
+    setTimeout(() => {
+        notificationloggedout.remove();
     }, 3000);
 }
 
@@ -691,10 +735,14 @@ function disableChatInteraction(disabled) {
         app.classList.add('locked');
         if (userInput) userInput.disabled = true;
         if (sendBtn) sendBtn.disabled = true;
+        if (micBtn) micBtn.disabled = true;
+        if (speakerBtn) speakerBtn.disabled = true;
     } else {
         app.classList.remove('locked');
         if (userInput) userInput.disabled = false;
         if (sendBtn) sendBtn.disabled = false;
+        if (micBtn) micBtn.disabled = false;
+        if (speakerBtn) speakerBtn.disabled = false;
     }
 }
 
@@ -708,6 +756,74 @@ userInput.addEventListener("keypress", function (e) {
         sendMessage();
     }
 });
+
+// ========== voice to text ==========
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition && micBtn) {
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+
+    micBtn.addEventListener("click", () => {
+        if (micBtn.classList.contains("listening")) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    });
+
+    recognition.onstart = () => {
+        micBtn.classList.add("listening");
+        userInput.placeholder = "Listening...";
+    };
+
+    recognition.onend = () => {
+        micBtn.classList.remove("listening");
+        userInput.placeholder = "Send a message...";
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        userInput.value = transcript;
+        userInput.focus();
+    };
+} else if (micBtn) {
+    micBtn.style.display = "none"; // Hide if not supported
+    console.log("Web Speech API not supported in this browser.");
+}
+
+// ========== text to speech ==========
+// toggle text to speech
+if (speakerBtn) {
+    speakerBtn.addEventListener("click", () => {
+        isTextToSpeechEnabled = !isTextToSpeechEnabled;
+        
+        const iconOn = document.getElementById("speakerIconOn");
+        const iconOff = document.getElementById("speakerIconOff");
+        
+        if (isTextToSpeechEnabled) {
+            if(iconOn) iconOn.style.display = "block";
+            if(iconOff) iconOff.style.display = "none";
+        } else {
+            if(iconOn) iconOn.style.display = "none";
+            if(iconOff) iconOff.style.display = "block";
+            window.speechSynthesis.cancel();
+        }
+    });
+}
+
+function speakText(text) {
+    if ('speechSynthesis' in window && isTextToSpeechEnabled) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        window.speechSynthesis.speak(utterance);
+    }
+}
 
 // toggle between light and dark theme
 themeToggle.addEventListener("click", () => {
