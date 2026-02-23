@@ -422,6 +422,7 @@ function initAuth() {
     
     // auth page elements
     const authEmail = document.getElementById("authEmail");
+    const authCreateEmail = document.getElementById("authCreateEmail");
     const authUsername = document.getElementById("authUsername");
     const authPassword = document.getElementById("authPassword");
     const authSignInBtn = document.getElementById("authSignInBtn");
@@ -452,14 +453,16 @@ function initAuth() {
         isSignUpMode = !!signUp;
         const authWarning = document.getElementById("authWarning");
         if (authWarning) authWarning.style.display = "none";
-        // clears input  when switching between sign in and create account modes
+        // clears input when switching between sign in and create account modes
         if (clearInputs) {
-            if (authEmail) authEmail.value = "";
             if (authPassword) {
                 authPassword.value = "";
-                authPassword.type = "password";
+                authPassword.type = "password";      
             }
             if (authUsername) authUsername.value = "";
+            // When switching modes, always clear the create account email input.
+            if (authCreateEmail) authCreateEmail.value = "";
+
             if (showPasswordToggle) {
                 const eyeOpen = showPasswordToggle.querySelector('.eye-icon-open');
                 const eyeClosed = showPasswordToggle.querySelector('.eye-icon-closed');
@@ -474,14 +477,18 @@ function initAuth() {
             authSignInBtn.style.display = "none";
             authCreateBtn.style.display = "flex";
             authToggleLink.textContent = "Already have an account? Sign in";
+            if (authEmail) authEmail.style.display = "none";
             if (authUsername) authUsername.style.display = "block";
+            if (authCreateEmail) authCreateEmail.style.display = "block";
         } else {
             authPageTitle.textContent = "Welcome To AI CHATBOT\n(Group 5)";
             authPageSubtitle.textContent = "Sign in to your account";
             authSignInBtn.style.display = "flex";
             authCreateBtn.style.display = "none";
             authToggleLink.textContent = "Don't have an account? Create one";
+            if (authEmail) authEmail.style.display = "block";
             if (authUsername) authUsername.style.display = "none";
+            if (authCreateEmail) authCreateEmail.style.display = "none";
         }
     }
 
@@ -507,7 +514,9 @@ function initAuth() {
 
     // sign in or create account from auth page
     function handleAuthSubmit() {
-        const email = (authEmail ? authEmail.value : "").trim();
+        const email = isSignUpMode
+            ? (authCreateEmail ? authCreateEmail.value : "").trim()
+            : (authEmail ? authEmail.value : "").trim();
         const pwd = (authPassword ? authPassword.value : "").trim();
         const username = (authUsername ? authUsername.value : "").trim();
 
@@ -548,7 +557,7 @@ function initAuth() {
             try { localStorage.setItem("last_auth_email", email); } catch (e) {}
             showSuccessNotification(`Account created and signed in as ${email}`);
             // clear inputs after successful sign-up
-            if (authEmail) authEmail.value = "";
+            if (authCreateEmail) authCreateEmail.value = "";
             if (authPassword) authPassword.value = "";
             if (authUsername) authUsername.value = "";
         } else {
@@ -622,40 +631,50 @@ function initAuth() {
     }
 
     // enter key to submit
-    [authEmail, authPassword, authUsername].forEach(el => {
+    [authEmail, authCreateEmail, authPassword, authUsername].forEach(el => {
         if (!el) return;
         el.addEventListener("keypress", function (e) {
             if (e.key === "Enter") handleAuthSubmit();
         });
     });
 
-    // clear warning when user starts typing in email field + save email to localstorage
-    if (authEmail) {
-        authEmail.addEventListener("input", () => {
+    // clear warning when user starts typing in email fields
+    [authEmail, authCreateEmail].forEach(el => {
+        if (!el) return;
+        el.addEventListener("input", () => {
             const authWarning = document.getElementById("authWarning");
             if (authWarning) authWarning.style.display = "none";
-            // save email to localstorage, or remove if empty
-            const emailValue = authEmail.value.trim();
-            if (emailValue) {
-                localStorage.setItem("last_auth_email", emailValue);
-            } else {
-                localStorage.removeItem("last_auth_email");
-            }
         });
-    }
+    });
 
     // header logout button
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
             currentUserEmail = null;
             currentUserName = null;
-            if (authPage) authPage.classList.remove("hidden");
             if (authBar) authBar.style.display = "none";
             chatBox.innerHTML = "";
             showLogoutNotification("You have been logged out.");
 
+            // Show the sign-in button in the header again
+            const headerSignInBtn = document.getElementById("headerSignInBtn");
+            if (headerSignInBtn) headerSignInBtn.style.display = "inline-block";
+
+            // Reset the auth page to its default state (sign-in mode)
+            const savedEmail = localStorage.getItem("last_auth_email");
+            if (authEmail) authEmail.value = savedEmail || "";
+            if (authPassword) {
+                authPassword.value = "";
+                authPassword.type = "password";
+            }
+            if (authCreateEmail) authCreateEmail.value = "";
+            if (authUsername) authUsername.value = "";
+            setMode(false, false); // Go to sign-in mode, don't clear inputs we just set
+            if (authPage) authPage.classList.remove("hidden");
+
          
-    }); }
+        });
+    }
 
     // header sign-in button for anonymous users
     const headerSignInBtn = document.getElementById("headerSignInBtn");
@@ -675,6 +694,7 @@ function initAuth() {
                 if(eyeOpen) eyeOpen.style.display = "block";
                 if(eyeClosed) eyeClosed.style.display = "none";
             }
+            if (authCreateEmail) authCreateEmail.value = "";
             if (authUsername) authUsername.value = "";
             setMode(false, false); // default to sign-in mode
             if (authPage) authPage.classList.remove("hidden");

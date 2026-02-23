@@ -262,6 +262,7 @@ body {
     border: 1px solid var(--border-color);
 }
 
+
 @keyframes pulse {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.7); }
     70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 75, 75, 0); }
@@ -449,6 +450,11 @@ body.light-mode .logout-notification {
 #authUsername {
     display: none;
     margin-bottom: 10px;
+    }
+
+    /* Initially hidden, JS will toggle */
+    #authCreateEmail {
+        display: none;
 }
 
 .auth-card h2 {
