@@ -52,7 +52,7 @@ function findAccount(email) {
 function createAccount(email, password, username) {
     if (!validateEmail(email)) return { ok: false, message: "Invalid email" };
     if (!password || password.length < 8) return { ok: false, message: "Password must be at least 8 characters" };
-    if (!username || username.length < 10) return { ok: false, message: "Username must be at least 10 characters" };
+    if (!username || username.length < 5) return { ok: false, message: "Username must be at least 5 characters" };
     if (findAccount(email)) return { ok: false, message: "An account with that email already exists" };
 
     const list = getAccounts();
@@ -78,7 +78,8 @@ function loadUserData(email) {
             chatBox.innerHTML = savedChat;
             welcomeMessage.style.display = "none";
         } else {
-            // show greeting if no saved chat
+            // show greeting if no saved chat when created account or first time login
+            chatBox.innerHTML = "";
             addBotMessage(getTimeGreeting());
         }
 
@@ -369,7 +370,7 @@ function getBotResponse(input) {
         return "✨ " + quotes[Math.floor(Math.random() * quotes.length)];
     }
 
-    if (input.includes("you know me")) {
+    if (input.includes("you know me") || input.includes("you know my name") || input.includes("who am i")) {
         if (currentUserName) {
             return `Yes, you are ${currentUserName}! How can I help you today?`;
         }
@@ -527,6 +528,7 @@ function initAuth() {
                 if (authWarning) {
                     authWarning.textContent = " " + res.message;
                     authWarning.style.display = "block";
+                    
                 }
                 return;
             
@@ -536,7 +538,7 @@ function initAuth() {
             if (authPage) authPage.classList.add("hidden");
             if (authBar) {
                 authBar.style.display = "flex";
-                userStatus.textContent = `Logged in as ${currentUserName}`;
+                userStatus.textContent = `Logged in as [${currentUserName}]`;
             }
             const headerSignInBtn = document.getElementById("headerSignInBtn");
             if (headerSignInBtn) headerSignInBtn.style.display = "none";
@@ -632,9 +634,12 @@ function initAuth() {
         authEmail.addEventListener("input", () => {
             const authWarning = document.getElementById("authWarning");
             if (authWarning) authWarning.style.display = "none";
-            // save email to localstorage
-            if (authEmail.value.trim()) {
-                localStorage.setItem("last_auth_email", authEmail.value.trim());
+            // save email to localstorage, or remove if empty
+            const emailValue = authEmail.value.trim();
+            if (emailValue) {
+                localStorage.setItem("last_auth_email", emailValue);
+            } else {
+                localStorage.removeItem("last_auth_email");
             }
         });
     }
@@ -663,6 +668,7 @@ function initAuth() {
                 authPassword.value = "";
                 authPassword.type = "password";
             }
+            // show password toggle in case it was hidden
             if (showPasswordToggle) {
                 const eyeOpen = showPasswordToggle.querySelector('.eye-icon-open');
                 const eyeClosed = showPasswordToggle.querySelector('.eye-icon-closed');

@@ -16,7 +16,6 @@
     --btn-bg: rgba(255, 255, 255, 0.1);
     --btn-icon-color: #ffffff;
     --accent-color: #00c6ff;
-    --logo-text-gradient: linear-gradient(135deg, #00c6ff, #1886b9);
     --placeholder-color: rgb(255, 255, 255);
     /* Sizes & Positions */
     --app-max-width: 800px; /* Controls the maximum width of the app container */
@@ -26,6 +25,7 @@
     --radius-lg: 20px;
     --radius-md: 15px;
     --radius-pill: 30px;
+    --logo-text-gradient: linear-gradient(135deg, #4facfe, #00f2fe);
 
 }
 
@@ -62,6 +62,7 @@ body {
     align-items: center;
     background: var(--header-bg);
     border-bottom: 1px solid var(--border-color);
+    height: 50px;
 }
 
 .chat-container {
@@ -111,12 +112,15 @@ body {
 
 /* logo text */
 .logo-text {
-    font-size: 18px;
-    font-weight: 600;
     background: var(--logo-text-gradient);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    color: transparent;
+    font-size: 20px;
+    opacity:0.8;
+    font-family: 'Inter', sans-serif
+    
+
 }
 
 /* ====================
@@ -366,7 +370,6 @@ body.light-mode {
     --msg-bot-bg: #f5f5f5;
     --input-wrapper-bg: #ffffff;
     --btn-bg: linear-gradient(135deg, #00c6ff, #1886b9);
-    --logo-text-gradient: linear-gradient(135deg, #4facfe, #00f2fe);
     --placeholder-color: rgba(83, 83, 83, 0.7);
 }
 
@@ -580,7 +583,8 @@ body.light-mode .logout-notification {
 }
 
 body.light-mode .auth-card {
-    background: #ffffff;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+    border: 1px solid #ddd;
 }
 
 body.light-mode .auth-skip-container {
@@ -677,6 +681,10 @@ body.light-mode .btn-skip {
     transition: 0.2s;
 }
 
+.auth-bar #userStatus {
+    font-size: 13px;
+}
+
 .auth-bar #logoutBtn:hover {
     background: rgba(255,255,255,0.12);
     transform: scale(1.05);
@@ -711,4 +719,3 @@ body.light-mode .btn-skip {
         transform: translateY(0) scale(1); 
     }
 }
-
