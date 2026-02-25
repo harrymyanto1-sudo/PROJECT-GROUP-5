@@ -18,7 +18,7 @@
     --accent-color: #00c6ff;
     --placeholder-color: rgb(255, 255, 255);
     /* Sizes & Positions */
-    --app-max-width: 800px; /* Controls the maximum width of the app container */
+    --app-max-width: 1000px; /* Controls the maximum width of the app container */
     --chat-width: 600px; /* Controls max width of chat content */
     --app-height: 95vh;
     --padding-base: 20px;
@@ -43,16 +43,131 @@ body {
    2. app layout & structure
    =========================== */
 .app {
-    width: 100%; /* Allows the app to shrink (squeeze) on smaller screens */
+    width: 45%; /* Allows the app to shrink (squeeze) on smaller screens */
     max-width: var(--app-max-width); /* Prevents the app from getting too wide on large screens */
     height: var(--app-height);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     background: var(--app-bg);
     backdrop-filter: blur(15px);
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: 0 20px 20px rgba(0,0,0,0.1);
+}
+
+/* =============
+   2.1 Sidebar
+   =========================== */
+.sidebar {
+    width: 260px;
+    background: rgba(0, 0, 0, 0.2);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.25s, opacity 0.25s;
+    flex-shrink: 0;
+    opacity: 1;
+}
+
+.sidebar.collapsed {
+    width: 0;
+    overflow: hidden;
+    border-right: none;
+    opacity: 0;
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-avatar {
+    position: relative;
+    bottom:25px;
+    width: 45px;
+    height: 45px;
+    background: var(--btn-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255, 255, 255);
+    border: 1px solid var(--border-color);
+}
+
+.profile-info h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.profile-info p {
+    margin: 4px 0 0 0;
+    font-size: 12px;
+    opacity: 0.6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.sidebar-menu {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+/* Sidebar scrollbar styling */
+.sidebar-menu::-webkit-scrollbar {
+    display: none;
+}
+
+.menu-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.5;
+    margin-bottom: 15px;
+    padding-left: 10px;
+}
+
+.menu-item {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    padding: 12px 15px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.menu-icon {
+    font-size: 18px;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Prevents flex items from overflowing */
 }
 
 .header {
@@ -65,6 +180,22 @@ body {
     height: 50px;
 }
 
+.sidebar-toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
 .chat-container {
     flex: 1;
     padding: 40px 20px;
@@ -73,6 +204,7 @@ body {
     flex-direction: column;
     align-items: center;  
     scroll-behavior: smooth;
+
 }
 
 .input-area {
@@ -398,6 +530,125 @@ body.light-mode .logout-notification {
     background: rgba(0, 0, 0, 0.1);
 }
 
+
+/* ========================================
+   Feature Modal
+   ======================================== */
+.modal {
+    position: fixed;
+    z-index: 4000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: var(--app-bg);
+    border: 1px solid var(--border-color);
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    color: var(--text-color);
+    text-align: center;
+}
+
+.modal-content button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: opacity 0.2s;
+}
+
+.modal-content button:hover {
+    opacity: 0.9;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal:hover {
+    color: var(--accent-color);
+}
+
+body.light-mode .modal-content {
+    background: #ffffff;
+    border-color: #e0e0e0;
+}
+
+/* Feature Grid Styles */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.feature-card {
+    background: var(--input-area-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.feature-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.feature-icon {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.feature-card h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.feature-card p {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.7;
+    line-height: 1.3;
+}
+
+
 /* ========================================
    8. authentication (full page)
    ======================================== */
@@ -603,6 +854,15 @@ body.light-mode .auth-page {
   background: #ffffff;
 
 }
+
+body.light-mode .sidebar {
+    background: #f8f9fa;
+    border-right: 1px solid #e0e0e0;
+}
+
+body.light-mode .menu-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
  
 
 
@@ -652,8 +912,9 @@ body.light-mode .btn-skip {
     font-weight: 500;
     transition: 0.2s;
     color: inherit;
-}
+     margin-top: 20px;
 
+}
 
 /* Initially hidden, JS will toggle */
 #headerSignInBtn {
@@ -685,6 +946,7 @@ body.light-mode .btn-skip {
     color:inherit;
     font-size: 13px;
     transition: 0.2s;
+    margin-top: 20px;
 }
 
 .auth-bar #userStatus {

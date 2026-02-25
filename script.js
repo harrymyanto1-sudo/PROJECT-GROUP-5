@@ -1,5 +1,5 @@
 // ========== ai chatbot for group 5 ==========
-// ========== dom elements ==========
+// document objects model [DOM]
 const themeToggle = document.getElementById("themeToggle");
 const chatBox = document.getElementById("chatBox");
 const userInput = document.getElementById("userInput");
@@ -7,6 +7,10 @@ const sendBtn = document.getElementById("sendBtn");
 const welcomeMessage = document.getElementById("welcomeMessage");
 const micBtn = document.getElementById("micBtn");
 const speakerBtn = document.getElementById("speakerBtn");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
+const featureModal = document.getElementById("featureModal");
+const closeFeatureModal = document.getElementById("closeFeatureModal");
 
 // ========== state variables ==========
 let currentUserEmail = null;
@@ -14,6 +18,8 @@ let currentUserName = null;
 let scheduleList = [];
 let gameActive = false;
 let isTextToSpeechEnabled = false;
+
+
 
 // ========== initialization ==========
 // load saved chat and theme on page load
@@ -31,6 +37,7 @@ window.onload = function () {
     welcomeMessage.style.display = "none";
     // allow interaction without account by default
     disableChatInteraction(false);
+    updateSidebarProfile();
 };
 
 // ========== authentication logic (backend simulation) ==========
@@ -51,6 +58,7 @@ function findAccount(email) {
 // returns {ok: bool, message: string} for success or failure with reason
 function createAccount(email, password, username) {
     if (!validateEmail(email)) return { ok: false, message: "Invalid email" };
+    if (!email || email.length < 15) return { ok: false, message: "Email must be at least 5 characters" };
     if (!password || password.length < 8) return { ok: false, message: "Password must be at least 8 characters" };
     if (!username || username.length < 5) return { ok: false, message: "Username must be at least 5 characters" };
     if (findAccount(email)) return { ok: false, message: "An account with that email already exists" };
@@ -352,7 +360,7 @@ function getBotResponse(input) {
         input.includes("i need inspiration")) {
         const quotes = [
             "Believe you can and you're halfway there.",
-            "Your limitation—it’s only your imagination.",
+            "Your limitation it’s only your imagination.",
             "Push yourself, because no one else is going to do it for you.",
             "Great things never come from comfort zones.",
             "Dream it. Wish it. Do it.",
@@ -374,10 +382,14 @@ function getBotResponse(input) {
         if (currentUserName) {
             return `Yes, you are ${currentUserName}! How can I help you today?`;
         }
-        return "No, you're in Anonymous mode Sign in or create an account to save your name and chat history!";
+        return "No, you're in Guest mode Sign in or create an account to remember your name and chat history!";
     }
 
     if (input.includes("your name")) {
+                if (currentUserName) {
+
+        return `I am AI CHATBOT your virtual assistant. and  you are ${currentUserName}! How can I help you today?`;
+    }
         return "I am AI CHATBOT your virtual assistant.";
     }
 
@@ -432,6 +444,8 @@ function initAuth() {
     const authPageTitle = document.getElementById("authPageTitle");
     const authPageSubtitle = document.getElementById("authPageSubtitle");
     const showPasswordToggle = document.getElementById("showPasswordToggle");
+    const chatContainer = document.getElementById("chatContainer");
+
 
     // restore saved email from localstorage
     if (authEmail) {
@@ -460,7 +474,6 @@ function initAuth() {
                 authPassword.type = "password";      
             }
             if (authUsername) authUsername.value = "";
-            // When switching modes, always clear the create account email input.
             if (authCreateEmail) authCreateEmail.value = "";
 
             if (showPasswordToggle) {
@@ -472,6 +485,7 @@ function initAuth() {
         }
 
         if (isSignUpMode) {
+            welcomeMessage.textContent = `Welcome to AI CHATBOT [${currentUserName}]`;
             authPageTitle.textContent = "Create Account";
             authPageSubtitle.textContent = "Sign up to save your chat and to remember your name";
             authSignInBtn.style.display = "none";
@@ -547,7 +561,6 @@ function initAuth() {
             if (authPage) authPage.classList.add("hidden");
             if (authBar) {
                 authBar.style.display = "flex";
-                userStatus.textContent = `Logged in as [${currentUserName}]`;
             }
             const headerSignInBtn = document.getElementById("headerSignInBtn");
             if (headerSignInBtn) headerSignInBtn.style.display = "none";
@@ -557,6 +570,7 @@ function initAuth() {
             try { localStorage.setItem("last_auth_email", email); } catch (e) {}
             showSuccessNotification(`Account created and signed in as ${email}`);
             // clear inputs after successful sign-up
+            updateSidebarProfile();
             if (authCreateEmail) authCreateEmail.value = "";
             if (authPassword) authPassword.value = "";
             if (authUsername) authUsername.value = "";
@@ -578,13 +592,13 @@ function initAuth() {
                 if (authPage) authPage.classList.add("hidden");
                 if (authBar) {
                     authBar.style.display = "flex";
-                    userStatus.textContent = `Logged in as ${currentUserName || email}`;
                 }
                 const headerSignInBtn = document.getElementById("headerSignInBtn");
                 if (headerSignInBtn) headerSignInBtn.style.display = "none";
                 loadUserData(email);
                 try { localStorage.setItem("last_auth_email", email); } catch (e) {}
                 showSuccessNotification(`Signed in as ${email}`);
+                updateSidebarProfile();
 
                 // clear inputs
                 if (authEmail) authEmail.value = "";
@@ -655,6 +669,7 @@ function initAuth() {
             if (authBar) authBar.style.display = "none";
             chatBox.innerHTML = "";
             showLogoutNotification("You have been logged out.");
+            updateSidebarProfile();
 
             // Show the sign-in button in the header again
             const headerSignInBtn = document.getElementById("headerSignInBtn");
@@ -703,6 +718,95 @@ function initAuth() {
 
     // default to sign-in mode
     setMode(false, false);
+}
+
+// ========== sidebar logic ==========
+if (sidebarToggle) {
+    sidebarToggle.addEventListener("click", () => {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) sidebar.classList.toggle("collapsed");
+    });
+}
+
+if (sidebarCloseBtn) {
+    sidebarCloseBtn.addEventListener("click", () => {
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) sidebar.classList.add("collapsed");
+    });
+}
+
+// ========== Feature Modal Logic ==========
+const featureData = {
+    features: {
+        title: "Key Features",
+        content: `
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Schedule</h3>
+                    <p>Manage your tasks easily.</p>
+                    <button onclick="triggerCommand('my schedule'); closeFeatureModalFunc()">Try it</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Game</h3>
+                    <p>Play Rock, Paper, Scissors.</p>
+                    <button onclick="triggerCommand('play game'); closeFeatureModalFunc()">Play</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Quote</h3>
+                    <p>Get daily motivation.</p>
+                    <button onclick="triggerCommand('give me a quote'); closeFeatureModalFunc()">Inspire</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Joke</h3>
+                    <p>Have a good laugh.</p>
+                    <button onclick="triggerCommand('tell me a joke'); closeFeatureModalFunc()">Laugh</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Calculator</h3>
+                    <p>Solve math problems.</p>
+                    <button onclick="triggerCommand('calculate 100 / 4'); closeFeatureModalFunc()">Calc</button>
+                </div>
+            </div>
+            <div style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">
+                Type <strong>"help"</strong> to see all commands in chat.
+            </div>
+        `
+    }
+};
+
+function showFeatureModal(featureKey) {
+    const data = featureData[featureKey];
+    if (!data) return;
+
+    document.getElementById("featureModalTitle").textContent = data.title;
+    document.getElementById("featureModalBody").innerHTML = data.content;
+    
+    if (featureModal) featureModal.classList.remove("hidden");
+}
+
+function closeFeatureModalFunc() {
+    if (featureModal) featureModal.classList.add("hidden");
+}
+
+if (closeFeatureModal) {
+    closeFeatureModal.addEventListener("click", closeFeatureModalFunc);
+}
+
+window.addEventListener("click", (e) => {
+    if (e.target === featureModal) closeFeatureModalFunc();
+});
+
+function updateSidebarProfile() {
+    const sidebarUsername = document.getElementById("sidebarUsername");
+    const sidebarEmail = document.getElementById("sidebarEmail");
+    
+    if (sidebarUsername) sidebarUsername.textContent = currentUserName || "Guest";
+    if (sidebarEmail) sidebarEmail.textContent = currentUserEmail || "Sign in to save chat";
 }
 
 // ========== dtility functions ==========
@@ -780,6 +884,14 @@ userInput.addEventListener("keypress", function (e) {
         sendMessage();
     }
 });
+
+// ========== feature commands ==========
+function triggerCommand(command) {
+    if (userInput) {
+        userInput.value = command;
+        sendMessage();
+    }
+}
 
 // ========== voice to text ==========
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
